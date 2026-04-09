@@ -1,0 +1,2183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA para la Vida — Taller Interactivo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* ===== CSS VARIABLES ===== */
+        :root {
+            --primary: #6C3AED;
+            --primary-light: #8B5CF6;
+            --primary-dark: #5B21B6;
+            --accent: #06D6A0;
+            --accent-dark: #05B384;
+            --neon-blue: #3B82F6;
+            --neon-pink: #EC4899;
+            --neon-cyan: #22D3EE;
+            --dark: #0F0F1A;
+            --dark-card: #1A1A2E;
+            --dark-surface: #16162A;
+            --text: #E2E8F0;
+            --text-muted: #94A3B8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --gradient-1: linear-gradient(135deg, #6C3AED, #3B82F6);
+            --gradient-2: linear-gradient(135deg, #06D6A0, #3B82F6);
+            --gradient-3: linear-gradient(135deg, #EC4899, #6C3AED);
+            --gradient-hero: linear-gradient(135deg, #0F0F1A 0%, #1A1A3E 50%, #0F0F1A 100%);
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ===== RESET ===== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+        body {
+            font-family: var(--font);
+            background: var(--dark);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        img { max-width: 100%; display: block; }
+        a { color: inherit; text-decoration: none; }
+        ul { list-style: none; }
+
+        /* ===== GLOBAL ANIMATED BACKGROUND ===== */
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-image:
+                linear-gradient(rgba(108, 58, 237, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(108, 58, 237, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+        }
+        .bg-orbs {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .bg-orbs .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+            animation: orbFloat 20s ease-in-out infinite;
+        }
+        .bg-orbs .orb:nth-child(1) { width: 600px; height: 600px; background: var(--primary); top: -10%; left: -10%; animation-delay: 0s; }
+        .bg-orbs .orb:nth-child(2) { width: 500px; height: 500px; background: var(--neon-cyan); top: 40%; right: -15%; animation-delay: -7s; }
+        .bg-orbs .orb:nth-child(3) { width: 400px; height: 400px; background: var(--neon-pink); bottom: 10%; left: 30%; animation-delay: -14s; }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -40px) scale(1.05); }
+            66% { transform: translate(-20px, 20px) scale(0.95); }
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 16px 0;
+            transition: var(--transition);
+        }
+        .navbar.scrolled {
+            background: rgba(15, 15, 26, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 10px 0;
+        }
+        .navbar .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-logo {
+            font-size: 1.2rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .nav-links a {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            border-radius: 8px;
+            transition: var(--transition);
+            position: relative;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--text);
+            background: var(--glass);
+        }
+        .nav-cta {
+            background: var(--gradient-1) !important;
+            color: white !important;
+            font-weight: 600 !important;
+            padding: 10px 20px !important;
+        }
+        .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(108, 58, 237, 0.4); }
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* ===== CONTAINER ===== */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* ===== HERO ===== */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 0 80px;
+            text-align: center;
+            z-index: 1;
+        }
+        .hero-content { max-width: 800px; }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--accent);
+            margin-bottom: 32px;
+            animation: fadeInUp 0.8s ease;
+        }
+        .hero-badge .pulse {
+            width: 8px; height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
+        }
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            margin-bottom: 24px;
+            animation: fadeInUp 0.8s ease 0.1s both;
+        }
+        .hero h1 .gradient-text {
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero h1 .accent-text {
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.3s both;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font);
+        }
+        .btn-primary {
+            background: var(--gradient-1);
+            color: white;
+            box-shadow: 0 4px 20px rgba(108, 58, 237, 0.3);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(108, 58, 237, 0.5); }
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--glass-border);
+        }
+        .btn-outline:hover { background: var(--glass); border-color: var(--primary-light); }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 60px;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+        .stat {
+            text-align: center;
+            padding: 20px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+
+        /* ===== SECTIONS ===== */
+        section {
+            position: relative;
+            z-index: 1;
+            padding: 100px 0;
+        }
+        .section-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 60px;
+        }
+        .section-label {
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            margin-bottom: 16px;
+        }
+        .section-header h2 {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 800;
+            letter-spacing: -1px;
+            line-height: 1.2;
+            margin-bottom: 16px;
+        }
+        .section-header p { color: var(--text-muted); font-size: 1.05rem; }
+
+        /* ===== AGENDA / TIMELINE ===== */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--primary), var(--accent), var(--neon-pink));
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 80px;
+            margin-bottom: 48px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .timeline-dot {
+            position: absolute;
+            left: 18px;
+            top: 4px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--dark);
+            border: 3px solid var(--primary);
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--primary-light);
+        }
+        .timeline-item:nth-child(2) .timeline-dot { border-color: var(--neon-blue); color: var(--neon-blue); }
+        .timeline-item:nth-child(3) .timeline-dot { border-color: var(--accent); color: var(--accent); }
+        .timeline-item:nth-child(4) .timeline-dot { border-color: var(--neon-cyan); color: var(--neon-cyan); }
+        .timeline-item:nth-child(5) .timeline-dot { border-color: var(--neon-pink); color: var(--neon-pink); }
+        .timeline-item:nth-child(6) .timeline-dot { border-color: #F472B6; color: #F472B6; }
+        .timeline-card {
+            background: var(--dark-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 28px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        .timeline-card:hover {
+            border-color: var(--primary-light);
+            transform: translateX(8px);
+            box-shadow: 0 8px 32px rgba(108, 58, 237, 0.15);
+        }
+        .timeline-card-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .timeline-card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 16px;
+        }
+        .timeline-card-body { flex: 1; }
+        .timeline-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .timeline-card p {
+            color: var(--text-muted);
+            font-size: 0.92rem;
+        }
+        .timeline-card-link {
+            display: block;
+            color: inherit;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* ===== IA INTRO / FEATURE CARDS ===== */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        .feature-card {
+            background: var(--dark-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 32px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--gradient-1);
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .feature-card:hover::before { opacity: 1; }
+        .feature-card:hover {
+            border-color: rgba(108, 58, 237, 0.3);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+        }
+        .feature-icon {
+            width: 56px; height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+        }
+        .feature-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* ===== PROMPTS SECTION ===== */
+        .prompt-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+        }
+        .prompt-card {
+            background: var(--dark-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        .prompt-card:hover {
+            border-color: rgba(108, 58, 237, 0.3);
+            transform: translateY(-4px);
+        }
+        .prompt-card-header {
+            padding: 20px 24px;
+            background: var(--glass);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .prompt-card-header .tag {
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .tag-weak { background: rgba(239, 68, 68, 0.15); color: #EF4444; }
+        .tag-strong { background: rgba(6, 214, 160, 0.15); color: var(--accent); }
+        .prompt-card-body { padding: 24px; }
+        .prompt-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .prompt-text {
+            font-family: var(--mono);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--glass-border);
+            margin-bottom: 16px;
+            color: var(--text-muted);
+        }
+        .prompt-text.improved {
+            border-color: rgba(6, 214, 160, 0.3);
+            color: var(--text);
+        }
+
+        /* ===== TOOLS / TABS ===== */
+        .tools-tabs {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 48px;
+        }
+        .tool-tab {
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-muted);
+            font-family: var(--font);
+        }
+        .tool-tab:hover, .tool-tab.active {
+            background: var(--gradient-1);
+            border-color: transparent;
+            color: white;
+        }
+        .tool-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .tool-content.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .tool-hero-card {
+            background: var(--dark-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 48px;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 36px;
+        }
+        .tool-hero-card h3 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+        .tool-hero-card p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .tool-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .tool-feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 20px;
+            background: var(--glass);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--glass-border);
+        }
+        .tool-feature-item .icon {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .tool-feature-item h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
+        .tool-feature-item p { font-size: 0.83rem; color: var(--text-muted); }
+
+        /* ===== CODE / COPILOT SECTION ===== */
+        .code-demo {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .code-window {
+            background: #1E1E2E;
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 32px;
+        }
+        .code-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .code-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .code-dot:nth-child(1) { background: #FF5F57; }
+        .code-dot:nth-child(2) { background: #FFBD2E; }
+        .code-dot:nth-child(3) { background: #28CA41; }
+        .code-filename { margin-left: 12px; font-size: 0.8rem; color: var(--text-muted); font-family: var(--mono); }
+        .code-body {
+            padding: 24px;
+            font-family: var(--mono);
+            font-size: 0.85rem;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+        .code-body .comment { color: #6A9955; }
+        .code-body .keyword { color: #C586C0; }
+        .code-body .function { color: #DCDCAA; }
+        .code-body .string { color: #CE9178; }
+        .code-body .variable { color: #9CDCFE; }
+        .code-body .number { color: #B5CEA8; }
+        .code-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .code-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 24px;
+            background: var(--dark-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            transition: var(--transition);
+        }
+        .code-step:hover { border-color: var(--neon-cyan); transform: translateY(-2px); }
+        .step-num {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        .code-step h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
+        .code-step p { font-size: 0.83rem; color: var(--text-muted); }
+
+        /* ===== SECURITY SECTION ===== */
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+        }
+        .security-card {
+            background: var(--dark-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+        .security-card.warning { border-left: 4px solid #F59E0B; }
+        .security-card.danger { border-left: 4px solid #EF4444; }
+        .security-card.safe { border-left: 4px solid var(--accent); }
+        .security-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+        .security-card p { color: var(--text-muted); font-size: 0.9rem; }
+        .security-card ul { margin-top: 12px; }
+        .security-card ul li {
+            padding: 6px 0;
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            padding-left: 20px;
+            position: relative;
+        }
+        .security-card ul li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--primary-light);
+        }
+
+        /* ===== ETHICS SECTION ===== */
+        .ethics-principles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            max-width: 900px;
+            margin: 0 auto 48px;
+        }
+        .principle {
+            padding: 20px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: var(--transition);
+            cursor: default;
+        }
+        .principle:hover {
+            background: var(--gradient-1);
+            border-color: transparent;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(108, 58, 237, 0.3);
+        }
+        .principle .emoji { font-size: 1.5rem; display: block; margin-bottom: 8px; }
+
+        /* ===== ENVIRONMENT SECTION ===== */
+        .env-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .env-column h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .env-list { display: flex; flex-direction: column; gap: 12px; }
+        .env-item {
+            padding: 16px 20px;
+            background: var(--glass);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--glass-border);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition);
+        }
+        .env-item:hover { transform: translateX(6px); }
+        .env-item.challenge { border-left: 3px solid #EF4444; }
+        .env-item.opportunity { border-left: 3px solid var(--accent); }
+        .env-impact-stat {
+            text-align: center;
+            padding: 40px;
+            background: var(--dark-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            max-width: 700px;
+            margin: 40px auto 0;
+        }
+        .env-impact-stat .big-number {
+            font-size: 3rem;
+            font-weight: 900;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ===== CONSCIOUSNESS / QUOTE ===== */
+        .quote-block {
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 60px 40px;
+            background: var(--dark-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            position: relative;
+        }
+        .quote-block::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 6rem;
+            font-weight: 900;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+        .quote-block p {
+            font-size: 1.15rem;
+            font-style: italic;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            position: relative;
+            z-index: 1;
+            padding: 60px 0 30px;
+            border-top: 1px solid var(--glass-border);
+        }
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .footer-brand { font-weight: 800; font-size: 1.1rem; }
+        .footer-text { color: var(--text-muted); font-size: 0.85rem; }
+        .footer-org { font-size: 0.85rem; color: var(--text-muted); }
+
+        /* ===== VIDEO CONTAINERS ===== */
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin: 32px auto;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            background: #000;
+        }
+        .video-container iframe {
+            width: 100%;
+            aspect-ratio: 16/9;
+            display: block;
+            border: none;
+        }
+        .video-label {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 12px;
+            font-style: italic;
+        }
+        /* ===== EXERCISE CARDS ===== */
+        .exercise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+        .exercise-card {
+            background: var(--dark-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 28px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .exercise-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--gradient-2);
+        }
+        .exercise-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+        .exercise-card .exercise-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            background: var(--gradient-1);
+            font-weight: 800;
+            font-size: 0.85rem;
+            margin-bottom: 14px;
+        }
+        .exercise-card h4 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+        .exercise-card p { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 10px; }
+        .exercise-card .prompt-example {
+            font-family: var(--mono);
+            font-size: 0.8rem;
+            padding: 12px;
+            background: rgba(0,0,0,0.3);
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(6, 214, 160, 0.2);
+            color: var(--accent);
+        }
+        .dato-flash {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px 20px;
+            background: var(--glass);
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--neon-cyan);
+            margin: 20px 0;
+            font-size: 0.9rem;
+        }
+        .dato-flash .emoji { font-size: 1.3rem; flex-shrink: 0; }
+
+        /* ===== SCROLL ANIMATIONS ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== SCROLL PROGRESS ===== */
+        .scroll-progress {
+            position: fixed;
+            top: 0; left: 0;
+            height: 3px;
+            background: var(--gradient-1);
+            z-index: 1001;
+            transition: width 0.1s;
+        }
+
+        /* ===== MOBILE RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .nav-links.open {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0; right: 0;
+                background: rgba(15, 15, 26, 0.95);
+                backdrop-filter: blur(20px);
+                padding: 20px;
+                border-bottom: 1px solid var(--glass-border);
+            }
+            .nav-toggle { display: block; }
+            .hero-stats { grid-template-columns: 1fr; gap: 12px; }
+            .timeline::before { left: 16px; }
+            .timeline-item { padding-left: 56px; }
+            .timeline-dot { left: 4px; }
+            .env-split { grid-template-columns: 1fr; }
+            .prompt-showcase { grid-template-columns: 1fr; }
+            section { padding: 60px 0; }
+            .tool-hero-card { padding: 28px; }
+            .quote-block { padding: 40px 24px; }
+        }
+
+        /* ===== INTERACTIVE QUIZ ===== */
+        .quiz-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--dark-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 40px;
+        }
+        .quiz-question { font-size: 1.1rem; font-weight: 600; margin-bottom: 24px; text-align: center; }
+        .quiz-options { display: flex; flex-direction: column; gap: 12px; }
+        .quiz-option {
+            padding: 16px 20px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            font-family: var(--font);
+            color: var(--text);
+            text-align: left;
+        }
+        .quiz-option:hover { border-color: var(--primary-light); background: rgba(108, 58, 237, 0.1); }
+        .quiz-option.correct { border-color: var(--accent); background: rgba(6, 214, 160, 0.15); }
+        .quiz-option.incorrect { border-color: #EF4444; background: rgba(239, 68, 68, 0.15); }
+        .quiz-feedback {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+        .quiz-feedback.show { display: block; }
+        .quiz-feedback.success { background: rgba(6, 214, 160, 0.15); color: var(--accent); }
+        .quiz-feedback.error { background: rgba(239, 68, 68, 0.15); color: #EF4444; }
+        .quiz-nav { display: flex; justify-content: center; gap: 12px; margin-top: 24px; }
+    </style>
+</head>
+<body>
+    <!-- Scroll Progress -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Background Effects -->
+    <div class="bg-grid"></div>
+    <div class="bg-orbs">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <a href="#hero" class="nav-logo">⚡ IA para la Vida</a>
+            <div class="nav-links" id="navLinks">
+                <a href="#agenda">Agenda</a>
+                <a href="#que-es-ia">¿Qué es IA?</a>
+                <a href="#prompts">Prompts</a>
+                <a href="#herramientas">Herramientas</a>
+                <a href="#programemos">Copilot</a>
+                <a href="#seguridad">Seguridad</a>
+                <a href="#etica">Ética</a>
+                <a href="#ambiente">Ambiente</a>
+            </div>
+            <button class="nav-toggle" id="navToggle" aria-label="Menú de navegación">☰</button>
+        </div>
+    </nav>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero" id="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="pulse"></span>
+                    Taller Interactivo 2026
+                </div>
+                <h1>
+                    <span class="gradient-text">Inteligencia Artificial</span><br>
+                    para la <span class="accent-text">vIdA</span>
+                </h1>
+                <p>En 2026. la IA ya no es el futuro — es el presente. ChatGPT tiene +400M usuarios, GPT-5.4 razona de forma autónoma y los agentes de IA ejecutan tareas complejas por ti. Aprende a dominarla en este taller práctico.</p>
+                <div class="hero-buttons">
+                    <a href="#agenda" class="btn btn-primary">🚀 Explorar Taller</a>
+                    <a href="#ejercicios" class="btn btn-outline">🧪 Ver Ejercicios</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-number" data-count="6">0</div>
+                        <div class="stat-label">Módulos</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" data-count="6">0</div>
+                        <div class="stat-label">Ejercicios Prácticos</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" data-count="88">0</div>
+                        <div class="stat-label">% Empresas usan IA (McKinsey)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== AGENDA ===== -->
+    <section id="agenda">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Ruta de Aprendizaje</span>
+                <h2>Agenda del Taller</h2>
+                <p>6 módulos diseñados para llevarte de cero a protagonista con la IA</p>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item" onclick="document.getElementById('que-es-ia').scrollIntoView({behavior:'smooth'})" style="cursor:pointer">
+                    <div class="timeline-dot">01</div>
+                    <div class="timeline-card">
+                        <div class="timeline-card-img">
+                            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="80" height="80" rx="16" fill="url(#grad1)"/>
+                                <defs><linearGradient id="grad1" x1="0" y1="0" x2="80" y2="80"><stop stop-color="#6C3AED"/><stop offset="1" stop-color="#3B82F6"/></linearGradient></defs>
+                                <circle cx="40" cy="30" r="12" stroke="white" stroke-width="2" fill="none"/>
+                                <path d="M28 30h-6M52 30h6M40 18v-6M40 42v6" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                <circle cx="40" cy="30" r="4" fill="white"/>
+                                <path d="M26 55c0-4 6-8 14-8s14 4 14 8" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>
+                                <path d="M30 62h20" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div class="timeline-card-body">
+                            <h3>🧠 Introducción a la IA</h3>
+                            <p>¿Qué es la inteligencia artificial? Historia, redes neuronales, IA generativa, GPT y cómo comunicarnos efectivamente con la IA.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item" onclick="document.getElementById('herramientas').scrollIntoView({behavior:'smooth'})" style="cursor:pointer">
+                    <div class="timeline-dot">02</div>
+                    <div class="timeline-card">
+                        <div class="timeline-card-img">
+                            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="80" height="80" rx="16" fill="url(#grad2)"/>
+                                <defs><linearGradient id="grad2" x1="0" y1="0" x2="80" y2="80"><stop stop-color="#06D6A0"/><stop offset="1" stop-color="#3B82F6"/></linearGradient></defs>
+                                <rect x="18" y="22" width="44" height="30" rx="4" stroke="white" stroke-width="2" fill="none"/>
+                                <path d="M30 58h20" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M36 52v6M44 52v6" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                <circle cx="32" cy="34" r="3" fill="white" opacity="0.8"/>
+                                <circle cx="40" cy="34" r="3" fill="white"/>
+                                <circle cx="48" cy="34" r="3" fill="white" opacity="0.8"/>
+                                <path d="M28 42h24" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+                                <path d="M28 46h16" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+                            </svg>
+                        </div>
+                        <div class="timeline-card-body">
+                            <h3>🛠️ Herramientas de IA para la Vida</h3>
+                            <p>Demostración práctica de Copilot, ChatGPT, Claude, Gemini y Power Automate para tareas reales: redacción, análisis de datos, automatización y más.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item" onclick="document.getElementById('programemos').scrollIntoView({behavior:'smooth'})" style="cursor:pointer">
+                    <div class="timeline-dot">03</div>
+                    <div class="timeline-card">
+                        <div class="timeline-card-img">
+                            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="80" height="80" rx="16" fill="url(#grad3)"/>
+                                <defs><linearGradient id="grad3" x1="0" y1="0" x2="80" y2="80"><stop stop-color="#22D3EE"/><stop offset="1" stop-color="#6C3AED"/></linearGradient></defs>
+                                <path d="M24 30l10 10-10 10" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M38 50h18" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                                <rect x="16" y="18" width="48" height="44" rx="6" stroke="white" stroke-width="2" fill="none"/>
+                                <path d="M16 26h48" stroke="white" stroke-width="1.5" opacity="0.4"/>
+                                <circle cx="22" cy="22" r="2" fill="#FF5F57"/>
+                                <circle cx="28" cy="22" r="2" fill="#FFBD2E"/>
+                                <circle cx="34" cy="22" r="2" fill="#28CA41"/>
+                            </svg>
+                        </div>
+                        <div class="timeline-card-body">
+                            <h3>💻 Programemos con Copilot</h3>
+                            <p>Hands-on: Creemos un juego paso a paso usando IA como asistente de programación en Visual Studio Code. Sin experiencia previa necesaria.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item" onclick="document.getElementById('seguridad').scrollIntoView({behavior:'smooth'})" style="cursor:pointer">
+                    <div class="timeline-dot">04</div>
+                    <div class="timeline-card">
+                        <div class="timeline-card-img">
+                            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="80" height="80" rx="16" fill="url(#grad4)"/>
+                                <defs><linearGradient id="grad4" x1="0" y1="0" x2="80" y2="80"><stop stop-color="#F59E0B"/><stop offset="1" stop-color="#EF4444"/></linearGradient></defs>
+                                <path d="M40 16L56 26v14c0 12-8 20-16 24-8-4-16-12-16-24V26L40 16z" stroke="white" stroke-width="2" fill="none"/>
+                                <path d="M34 40l4 4 8-8" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="40" cy="38" r="14" stroke="white" stroke-width="1" fill="none" opacity="0.2"/>
+                            </svg>
+                        </div>
+                        <div class="timeline-card-body">
+                            <h3>🔒 Seguridad de la Información</h3>
+                            <p>Lineamientos para proteger datos corporativos y personales al usar herramientas de IA. Alucinaciones, phishing potenciado por IA y buenas prácticas.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item" onclick="document.getElementById('legislacion').scrollIntoView({behavior:'smooth'})" style="cursor:pointer">
+                    <div class="timeline-dot">05</div>
+                    <div class="timeline-card">
+                        <div class="timeline-card-img">
+                            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="80" height="80" rx="16" fill="url(#grad5b)"/>
+                                <defs><linearGradient id="grad5b" x1="0" y1="0" x2="80" y2="80"><stop stop-color="#8B5CF6"/><stop offset="1" stop-color="#EC4899"/></linearGradient></defs>
+                                <rect x="22" y="16" width="36" height="48" rx="4" stroke="white" stroke-width="2" fill="none"/>
+                                <path d="M30 26h20M30 34h20M30 42h14" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+                                <circle cx="40" cy="54" r="6" stroke="white" stroke-width="2" fill="none"/>
+                                <path d="M38 54h4M40 52v4" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div class="timeline-card-body">
+                            <h3>📜 Marco Legal</h3>
+                            <p>Panorama regulatorio de la IA: AI Act de la UE, normativas en Colombia, políticas corporativas Enel y tendencias legislativas globales 2024-2026.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item" onclick="document.getElementById('etica').scrollIntoView({behavior:'smooth'})" style="cursor:pointer">
+                    <div class="timeline-dot">06</div>
+                    <div class="timeline-card">
+                        <div class="timeline-card-img">
+                            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="80" height="80" rx="16" fill="url(#grad6)"/>
+                                <defs><linearGradient id="grad6" x1="0" y1="0" x2="80" y2="80"><stop stop-color="#EC4899"/><stop offset="1" stop-color="#6C3AED"/></linearGradient></defs>
+                                <circle cx="40" cy="32" r="14" stroke="white" stroke-width="2" fill="none"/>
+                                <path d="M33 32h14M40 25v14" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M28 52c2-4 7-6 12-6s10 2 12 6" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>
+                                <path d="M22 58h36" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M26 62h28" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+                            </svg>
+                        </div>
+                        <div class="timeline-card-body">
+                            <h3>⚖️ Ética, Conciencia y Medio Ambiente</h3>
+                            <p>Reflexión sobre el impacto ético, ambiental y social de la IA. Principios éticos y consumo de recursos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== ¿QUÉ ES IA? ===== -->
+    <section id="que-es-ia">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Módulo 01 - Introducción a la IA</span>
+                <h2>¿Qué es la Inteligencia Artificial?</h2>
+                <p>La capacidad de las máquinas para realizar tareas que normalmente requieren inteligencia humana. En 2026, el 88% de las organizaciones ya usan IA en al menos una función de negocio.</p>
+            </div>
+
+            <!-- Video Introductorio -->
+            <div class="video-container reveal">
+                <iframe src="https://www.youtube.com/embed/ad79nYk2keg" title="¿Qué es la Inteligencia Artificial? Explicado en 5 minutos" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <p class="video-label reveal">📺 ¿Qué es la Inteligencia Artificial? — Explicación clara y visual</p>
+
+            <div class="features-grid">
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🧬</div>
+                    <h3>Redes Neuronales</h3>
+                    <p>Modelos inspirados en el cerebro. En 2026, los transformers procesan texto, imágenes, audio y video simultáneamente (GPT-5.4 es multimodal nativo).</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">✨</div>
+                    <h3>IA Generativa &amp; GPT</h3>
+                    <p><strong>G</strong>enerativa, <strong>P</strong>reentrenada, <strong>T</strong>ransformer — De GPT-3.5 (2022) a GPT-5.4 (marzo 2026): la IA ahora razona, genera imágenes con texto preciso y opera computadores de forma autónoma.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🤖</div>
+                    <h3>Agentes de IA (Novedad 2025-2026)</h3>
+                    <p>Sistemas que ejecutan tareas de múltiples pasos autónomamente: navegación web, compras, investigación profunda. El 62% de empresas ya experimenta con agentes (McKinsey 2025).</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🗣️</div>
+                    <h3>NLP — Lenguaje Natural</h3>
+                    <p>La IA entiende 59+ idiomas. ChatGPT superó el Test de Turing según Stanford (2024). Ahora puedes hablarle por teléfono y por voz.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Deep Research</h3>
+                    <p>Lanzado en febrero 2025: combina razonamiento avanzado (o3) con búsqueda web para generar informes exhaustivos. Investiga como un analista humano.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🖼️</div>
+                    <h3>Generación de Imágenes</h3>
+                    <p>GPT Image (marzo 2025) reemplazó a DALL-E: genera imágenes con texto legible, edita fotos existentes e incluye metadatos C2PA de autenticidad.</p>
+                </div>
+            </div>
+
+            <div class="dato-flash reveal">
+                <span class="emoji">📊</span>
+                <div><strong>Dato actualizado:</strong> ChatGPT alcanzó 100 millones de usuarios en solo 2 meses (récord histórico). En marzo 2025, el 58% de adultos jóvenes en EEUU ya lo han usado (Pew Research). El modelo activo actual es GPT-5.4 (marzo 2026).</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PROMPTS ===== -->
+    <section id="prompts" style="background: var(--dark-surface);">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Comunicación con la IA</span>
+                <h2>El Arte del Prompt</h2>
+                <p>Un PROMPT es la instrucción que le das a la IA. La calidad de tu respuesta depende de la calidad de tu pregunta.</p>
+            </div>
+
+            <!-- Prompt Structure -->
+            <div class="features-grid" style="margin-bottom: 48px;">
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Contexto</h3>
+                    <p>Explica brevemente la situación o para qué necesitas la respuesta.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🎭</div>
+                    <h3>Rol</h3>
+                    <p>Pide que actúe como un experto: "Actúa como un profesor de matemáticas".</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">✅</div>
+                    <h3>Tarea Concreta</h3>
+                    <p>Indica qué necesitas: resumir, redactar, explicar, analizar, traducir.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">⚙️</div>
+                    <h3>Detalles Clave</h3>
+                    <p>Formato, longitud, tono, idioma, referencias, estilo.</p>
+                </div>
+            </div>
+
+            <!-- Prompt Examples -->
+            <h3 class="reveal" style="text-align: center; font-size: 1.3rem; margin-bottom: 32px;">Débil vs. Mejorado — Siente la diferencia</h3>
+            <div class="prompt-showcase">
+                <div class="prompt-card reveal">
+                    <div class="prompt-card-header">
+                        <span style="font-size: 1.2rem;">✍️</span>
+                        <strong>Redacción Profesional</strong>
+                    </div>
+                    <div class="prompt-card-body">
+                        <div class="prompt-label">❌ Prompt débil</div>
+                        <div class="prompt-text">Escríbeme un correo.</div>
+                        <div class="prompt-label">✅ Prompt mejorado</div>
+                        <div class="prompt-text improved">Actúa como un asistente ejecutivo. Escribe un correo formal en inglés para solicitar a un proveedor que nos envíe la cotización actualizada del contrato 2025. Usa un tono profesional pero cordial. Dirígelo a "Mr. John Smith".</div>
+                    </div>
+                </div>
+                <div class="prompt-card reveal">
+                    <div class="prompt-card-header">
+                        <span style="font-size: 1.2rem;">📚</span>
+                        <strong>Aprendizaje</strong>
+                    </div>
+                    <div class="prompt-card-body">
+                        <div class="prompt-label">❌ Prompt débil</div>
+                        <div class="prompt-text">Explícame qué es la inteligencia artificial.</div>
+                        <div class="prompt-label">✅ Prompt mejorado</div>
+                        <div class="prompt-text improved">Explícame qué es la inteligencia artificial como si tuvieras que enseñárselo a un estudiante de secundaria. Usa ejemplos simples y evita tecnicismos.</div>
+                    </div>
+                </div>
+                <div class="prompt-card reveal">
+                    <div class="prompt-card-header">
+                        <span style="font-size: 1.2rem;">💡</span>
+                        <strong>Generación de Ideas</strong>
+                    </div>
+                    <div class="prompt-card-body">
+                        <div class="prompt-label">❌ Prompt débil</div>
+                        <div class="prompt-text">Dame ideas de negocio.</div>
+                        <div class="prompt-label">✅ Prompt mejorado</div>
+                        <div class="prompt-text improved">Soy un ingeniero industrial con experiencia en automatización y análisis de datos. Quiero ideas de negocio rentables en Colombia que aprovechen estas habilidades. Preferiblemente de bajo costo inicial.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== HERRAMIENTAS IA ===== -->
+    <section id="herramientas">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Módulo 02 - Herramientas de la IA</span>
+                <h2>Herramientas</h2>
+                <p>Tres herramientas poderosas a tu alcance para potenciar tu productividad</p>
+            </div>
+
+            <!-- AI Models Logos -->
+            <div class="ai-models-bar reveal" style="display:flex;justify-content:center;gap:32px;flex-wrap:wrap;margin-bottom:48px;padding:28px 32px;background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius);">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/512px-ChatGPT_logo.svg.png" alt="ChatGPT" style="width:32px;height:32px;border-radius:8px;">
+                    <span style="font-size:0.85rem;font-weight:600;color:var(--text-muted);">ChatGPT</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Microsoft_Copilot_logo.svg/512px-Microsoft_Copilot_logo.svg.png" alt="Copilot" style="width:32px;height:32px;border-radius:8px;">
+                    <span style="font-size:0.85rem;font-weight:600;color:var(--text-muted);">Copilot</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Google_Gemini_logo.svg/512px-Google_Gemini_logo.svg.png" alt="Gemini" style="width:32px;height:32px;border-radius:8px;">
+                    <span style="font-size:0.85rem;font-weight:600;color:var(--text-muted);">Gemini</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Anthropic_logo.svg/512px-Anthropic_logo.svg.png" alt="Claude" style="width:32px;height:32px;border-radius:8px;">
+                    <span style="font-size:0.85rem;font-weight:600;color:var(--text-muted);">Claude</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Meta_Platforms_Inc._logo.svg/512px-Meta_Platforms_Inc._logo.svg.png" alt="Meta AI" style="width:32px;height:32px;border-radius:8px;">
+                    <span style="font-size:0.85rem;font-weight:600;color:var(--text-muted);">Meta AI</span>
+                </div>
+            </div>
+
+            <div class="tools-tabs reveal">
+                <button class="tool-tab active" data-tool="copilot">🤖 Microsoft Copilot</button>
+                <button class="tool-tab" data-tool="chatgpt">💬 ChatGPT</button>
+                <button class="tool-tab" data-tool="claude">🟠 Claude</button>
+                <button class="tool-tab" data-tool="gemini">✨ Gemini</button>
+                <button class="tool-tab" data-tool="automate">⚡ Power Automate</button>
+            </div>
+
+            <!-- Copilot -->
+            <div class="tool-content active" id="tool-copilot">
+                <div class="tool-hero-card">
+                    <h3>🤖 Microsoft Copilot</h3>
+                    <p>Tu asistente de IA corporativo integrado en Microsoft 365. Disponible en Teams, Outlook, Edge, Windows y M365Copilot.com.</p>
+                </div>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/S7xTBa93TX8" title="Microsoft Copilot Tutorial" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                </div>
+                <p class="video-label">📺 Tutorial rápido de Microsoft Copilot</p>
+                <div class="tool-features">
+                    <div class="tool-feature-item">
+                        <span class="icon">✍️</span>
+                        <div>
+                            <h4>Redacción y Comunicación</h4>
+                            <p>Correos, informes, minutas. Revisión de ortografía, estilo, tono profesional y traducción.</p>
+                        </div>
+                    </div>
+                    <div class="tool-feature-item">
+                        <span class="icon">⚙️</span>
+                        <div>
+                            <h4>Documentación Técnica</h4>
+                            <p>Explicaciones simplificadas, glosarios, resúmenes de resoluciones, guías paso a paso.</p>
+                        </div>
+                    </div>
+                    <div class="tool-feature-item">
+                        <span class="icon">📊</span>
+                        <div>
+                            <h4>Análisis de Datos</h4>
+                            <p>Ayuda con Excel y fórmulas, limpieza de datos, generación de información.</p>
+                        </div>
+                    </div>
+                    <div class="tool-feature-item">
+                        <span class="icon">🔗</span>
+                        <div>
+                            <h4>Acceso Rápido</h4>
+                            <p>Disponible en Teams, Outlook, Edge, la app de Windows y M365Copilot.com.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ChatGPT -->
+            <div class="tool-content" id="tool-chatgpt">
+                <div class="tool-hero-card">
+                    <h3>💬 ChatGPT (GPT-5.4 — 2026)</h3>
+                    <p>El chatbot de IA más popular del mundo. Versión gratuita con GPT-5 mini. Ahora con agentes autónomos, Deep Research, generación de imágenes, búsqueda web y apps para iOS/Android/Windows.</p>
+                </div>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/2Xu8MnfhWuU" title="Cómo usar ChatGPT" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                </div>
+                <p class="video-label">📺 ChatGPT: Guía completa para principiantes</p>
+                <div class="tool-features">
+                    <div class="tool-feature-item">
+                        <span class="icon">🤖</span>
+                        <div>
+                            <h4>Agente ChatGPT (julio 2025)</h4>
+                            <p>Ejecuta tareas multi-paso de forma autónoma: investiga, compara y actúa en la web por ti.</p>
+                        </div>
+                    </div>
+                    <div class="tool-feature-item">
+                        <span class="icon">🔍</span>
+                        <div>
+                            <h4>Deep Research (feb 2025)</h4>
+                            <p>Genera informes exhaustivos combinando razonamiento avanzado y búsqueda web. Ideal para análisis complejos.</p>
+                        </div>
+                    </div>
+                    <div class="tool-feature-item">
+                        <span class="icon">🖼️</span>
+                        <div>
+                            <h4>Generación de Imágenes</h4>
+                            <p>GPT Image genera imágenes con texto legible, edita fotos y crea contenido visual profesional.</p>
+                        </div>
+                    </div>
+                    <div class="tool-feature-item">
+                        <span class="icon">📱</span>
+                        <div>
+                            <h4>Multiplataforma</h4>
+                            <p>Apps iOS, Android, Windows, navegador Atlas, e incluso por teléfono (15 min/mes gratis). Disponible en 59 idiomas.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Claude -->
+            <div class="tool-content" id="tool-claude">
+                <div class="tool-hero-card">
+                    <h3>🟠 Claude (Anthropic — 2026)</h3>
+                    <p>Asistente de IA de Anthropic enfocado en seguridad y razonamiento avanzado. Destaca por su capacidad de análisis de documentos largos, escritura de alta calidad y ejecución de código.</p>
+                </div>
+                <div class="tool-features">
+                    <div class="tool-feature-item">
+                        <span class="icon">📄</span>
+                        <div>
+                            <h4>Análisis de Documentos</h4>
+                            <p>Procesa hasta 200K tokens de contexto. Ideal para analizar contratos, reportes extensos y documentación técnica.</p>
+                        </div>
+                    </div>
+                    <div class="tool-feature-item">
+                        <span class="icon">✍️</span>
+                        <div>
+                            <h4>Escritura de Alta Calidad</h4>
+                            <p>Reconocido por su estilo de escritura claro, matizado y natural. Excelente para comunicaciones corporativas.</p>
+                        </div>
+                    </div>
+                    <div class="tool-feature-item">
+                        <span class="icon">💻</span>
+                        <div>
+                            <h4>Artifacts & Code</h4>
+                            <p>Genera código, visualizaciones y documentos interactivos directamente en la conversación.</p>
+                        </div>
+                    </div>
+                    <div class="tool-feature-item">
+                        <span class="icon">🛡️</span>
+                        <div>
+                            <h4>Seguridad por Diseño</h4>
+                            <p>Entrenado con IA Constitucional. Prioriza respuestas seguras, éticas y alineadas con valores humanos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gemini -->
+            <div class="tool-content" id="tool-gemini">
+                <div class="tool-hero-card">
+                    <h3>✨ Google Gemini (2026)</h3>
+                    <p>La IA multimodal de Google integrada en el ecosistema de Workspace, Android y Search. Comprende texto, imágenes, código, audio y video de forma nativa.</p>
+                </div>
+                <div class="tool-features">
+                    <div class="tool-feature-item">
+                        <span class="icon">🌐</span>
+                        <div>
+                            <h4>Multimodal Nativo</h4>
+                            <p>Procesa texto, imágenes, audio y video en una sola conversación. Analiza fotos, gráficas y documentos escaneados.</p>
+                        </div>
+                    </div>
+                    <div class="tool-feature-item">
+                        <span class="icon">📧</span>
+                        <div>
+                            <h4>Integración Google Workspace</h4>
+                            <p>Disponible en Gmail, Docs, Sheets, Slides y Meet. Resume correos, genera presentaciones y analiza hojas de cálculo.</p>
+                        </div>
+                    </div>
+                    <div class="tool-feature-item">
+                        <span class="icon">🔍</span>
+                        <div>
+                            <h4>Búsqueda Avanzada</h4>
+                            <p>Deep Research con acceso a la web de Google. Genera informes detallados con fuentes verificables.</p>
+                        </div>
+                    </div>
+                    <div class="tool-feature-item">
+                        <span class="icon">📱</span>
+                        <div>
+                            <h4>Gemini en Android</h4>
+                            <p>Asistente predeterminado en Android. Controla apps, responde preguntas sobre lo que ves en pantalla y más.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Power Automate -->
+            <div class="tool-content" id="tool-automate">
+                <div class="tool-hero-card">
+                    <h3>⚡ Power Automate + Copilot (2025)</h3>
+                    <p>Automatiza flujos de trabajo repetitivos con IA integrada. Desde 2024, Copilot está embebido en Power Automate para crear flujos con lenguaje natural.</p>
+                </div>
+
+                <!-- Video Power Automate -->
+                <div class="video-container" style="margin: 24px 0;">
+                    <iframe src="https://www.youtube.com/embed/xgjPqmlteSQ" title="Power Automate con Copilot" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                </div>
+                <p class="video-label">📺 Power Automate + Copilot — Automatiza sin código con IA</p>
+
+                <div class="tool-features">
+                    <div class="tool-feature-item">
+                        <span class="icon">🗣️</span>
+                        <div>
+                            <h4>Describe tu Flujo en Español</h4>
+                            <p>Copilot en Power Automate: describe tu automatización en lenguaje natural y se crea automáticamente.</p>
+                        </div>
+                    </div>
+                    <div class="tool-feature-item">
+                        <span class="icon">🤖</span>
+                        <div>
+                            <h4>Centro de IA</h4>
+                            <p>Hub centralizado con modelos de IA (GPT, Azure AI) listos para integrar en tus flujos de trabajo.</p>
+                        </div>
+                    </div>
+                    <div class="tool-feature-item">
+                        <span class="icon">📧</span>
+                        <div>
+                            <h4>Correos Inteligentes</h4>
+                            <p>Clasifica correos por urgencia con IA, envía resúmenes automáticos a Teams y gestiona aprobaciones.</p>
+                        </div>
+                    </div>
+                    <div class="tool-feature-item">
+                        <span class="icon">📋</span>
+                        <div>
+                            <h4>Sin Código + 1,000 Conectores</h4>
+                            <p>Interfaz visual drag-and-drop. Conecta Microsoft 365, SAP, Salesforce y más de 1,000 servicios.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PROGRAMEMOS CON COPILOT ===== -->
+    <section id="programemos" style="background: var(--dark-surface);">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Módulo 04 — Hands-On</span>
+                <h2>💻 Programemos con Copilot</h2>
+                <p>Ayudémonos de la IA para programar — 3 ejercicios prácticos de dificultad creciente</p>
+            </div>
+
+            <!-- Video de GitHub Copilot -->
+            <div class="video-container reveal">
+                <iframe src="https://www.youtube.com/embed/jXp5D5ZnxGM" title="GitHub Copilot en acción" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <p class="video-label reveal">📺 Introducción a GitHub Copilot — Tu programador IA</p>
+
+            <div class="code-demo">
+                <div class="code-window reveal">
+                    <div class="code-header">
+                        <div class="code-dot"></div>
+                        <div class="code-dot"></div>
+                        <div class="code-dot"></div>
+                        <span class="code-filename">triqui.py — generado con Copilot</span>
+                    </div>
+                    <div class="code-body">
+                        <span class="comment"># 🎮 Juego de Triqui generado con IA</span><br>
+                        <span class="keyword">import</span> <span class="variable">tkinter</span> <span class="keyword">as</span> <span class="variable">tk</span><br><br>
+                        <span class="keyword">class</span> <span class="function">TrikiGame</span>:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.<span class="variable">window</span> = <span class="variable">tk</span>.<span class="function">Tk</span>()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.<span class="variable">window</span>.<span class="function">title</span>(<span class="string">"Triqui - IA para la Vida"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.<span class="variable">board</span> = [<span class="string">""</span>] * <span class="number">9</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.<span class="variable">current</span> = <span class="string">"X"</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># ... Copilot genera el resto ✨</span><br>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EJERCICIOS MEJORADOS -->
+            <div id="ejercicios">
+                <div class="section-header reveal" style="margin-top: 60px; margin-bottom: 32px;">
+                    <h3>🧪 Ejercicios del Taller</h3>
+                    <p>6 ejercicios prácticos para dominar la IA en tu día a día</p>
+                </div>
+                <div class="exercise-grid">
+                    <div class="exercise-card reveal">
+                        <div class="exercise-num">1</div>
+                        <h4>✉️ Redacción Profesional con Copilot</h4>
+                        <p>Usa Copilot en Outlook/Teams para redactar un correo formal solicitando un aumento salarial, mencionando logros específicos.</p>
+                        <div class="prompt-example">💡 Prompt: "Redacta un correo muy formal solicitando aumento de sueldo. La razón: he implementado exitosamente la resolución CREG-015 con trabajo extra significativo. Tono: respetuoso pero firme."</div>
+                    </div>
+                    <div class="exercise-card reveal">
+                        <div class="exercise-num">2</div>
+                        <h4>📊 Finanzas Personales con ChatGPT</h4>
+                        <p>Pídele a ChatGPT que genere un archivo Excel completo para control de finanzas personales con gráficos e indicadores.</p>
+                        <div class="prompt-example">💡 Prompt: "Genera un archivo Excel para control de finanzas personales con ingresos, gastos, gráficas de resumen y todos los indicadores para mejorar mi control de gastos."</div>
+                    </div>
+                    <div class="exercise-card reveal">
+                        <div class="exercise-num">3</div>
+                        <h4>🎮 Programa un Juego de Triqui</h4>
+                        <p>En VS Code, usa Copilot para crear un juego paso a paso. Primero la lógica básica, luego mejóralo a una app de escritorio con interfaz gráfica.</p>
+                        <div class="prompt-example">💡 Paso 1: "Dame código Python de un juego de triqui" → Paso 2: "Mejora el código para una app de escritorio con colores y animaciones"</div>
+                    </div>
+                    <div class="exercise-card reveal">
+                        <div class="exercise-num">4</div>
+                        <h4>🔍 Deep Research: Análisis de Regulación</h4>
+                        <p>Usa la función Deep Research de ChatGPT para analizar el estado actual de la regulación de IA en Colombia vs. la Unión Europea.</p>
+                        <div class="prompt-example">💡 Prompt: "Haz una investigación profunda comparando la regulación de IA en Colombia (proyectos de ley, CONPES 3975) vs. el Reglamento de IA de la UE 2024. Tabla comparativa."</div>
+                    </div>
+                    <div class="exercise-card reveal">
+                        <div class="exercise-num">5</div>
+                        <h4>🖼️ Generación de Imágenes</h4>
+                        <p>Experimenta con GPT Image: genera un logo profesional, una infografía o una presentación visual para tu área de trabajo.</p>
+                        <div class="prompt-example">💡 Prompt: "Genera una infografía profesional sobre los 5 principios de seguridad de información al usar IA. Estilo corporativo, colores azul y verde, incluye iconos."</div>
+                    </div>
+                    <div class="exercise-card reveal">
+                        <div class="exercise-num">6</div>
+                        <h4>⚡ Automatiza con Power Automate</h4>
+                        <p>Crea un flujo automático que te envíe un resumen diario de correos importantes usando IA integrada de Power Automate.</p>
+                        <div class="prompt-example">💡 Describe en Power Automate: "Cuando reciba un correo de mi jefe, clasifícalo por urgencia con IA y envíame un resumen a Teams."</div>
+                    </div>
+                </div>
+                <p style="text-align: center; color: var(--text-muted); margin-top: 32px; font-size: 0.85rem;" class="reveal">
+                    💡 <strong>Nota:</strong> Para programar se requiere Python instalado y VS Code con GitHub Copilot. Copilot puede generar código en cualquier lenguaje: Python, VBA, Java, JavaScript, etc.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SEGURIDAD ===== -->
+    <section id="seguridad">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Módulo 04</span>
+                <h2>🔒 Seguridad de la Información</h2>
+                <p>La IA es poderosa, pero debemos usarla con responsabilidad. En 2023-2024, los ataques de phishing con IA aumentaron un 1,265%.</p>
+            </div>
+
+            <!-- Video de Ciberseguridad -->
+            <div class="video-container reveal">
+                <iframe src="https://www.youtube.com/embed/Dk-x6sGRmbo" title="Ciberseguridad e IA" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <p class="video-label reveal">📺 Ciberseguridad en la era de la IA — Amenazas y defensas</p>
+
+            <div class="security-grid">
+                <div class="security-card warning reveal">
+                    <h3>⚠️ Alucinaciones de la IA</h3>
+                    <p>ChatGPT alucina aproximadamente el 3% de las veces (estudio 2023). Genera información falsa que parece verdadera, incluyendo citas académicas inventadas.</p>
+                    <ul>
+                        <li>Abogados en EEUU fueron sancionados por citar casos legales ficticios generados por ChatGPT (2023)</li>
+                        <li>En enero 2026, un investigador perdió 2 años de historial de ChatGPT al desactivar el consentimiento de datos</li>
+                        <li>Comprueba SIEMPRE la información con fuentes de confianza verificadas</li>
+                    </ul>
+                </div>
+                <div class="security-card danger reveal">
+                    <h3>🛑 Datos Sensibles</h3>
+                    <p>Nunca introduzcas información sensible en sistemas de IA no corporativos. En marzo 2023, un bug de ChatGPT filtró títulos de conversaciones, emails y datos de tarjetas de crédito de usuarios.</p>
+                    <ul>
+                        <li>Usa SOLO herramientas corporativas aprobadas (Copilot empresarial)</li>
+                        <li>OpenAI puede usar tus conversaciones para entrenar modelos (desactiva esta opción)</li>
+                        <li>Desde enero 2026, ChatGPT muestra anuncios basados en conversaciones</li>
+                    </ul>
+                </div>
+                <div class="security-card warning reveal">
+                    <h3>🎣 Phishing Potenciado por IA</h3>
+                    <p>1,265% de aumento en emails maliciosos de phishing entre 2022-2023. La IA genera correos personalizados, bien redactados y dirigidos en segundos.</p>
+                    <ul>
+                        <li>Correos de phishing cada vez más difíciles de distinguir de los reales</li>
+                        <li>CyberArk demostró que ChatGPT puede crear malware polimórfico</li>
+                        <li>ChatGPT-4o llegó a redirigir usuarios a sitios de scam con alertas falsas de virus</li>
+                    </ul>
+                </div>
+                <div class="security-card safe reveal">
+                    <h3>🛡️ IA como Aliada</h3>
+                    <p>La IA también es una gran aliada de los equipos de ciberseguridad. El 51% de organizaciones ya ha experimentado consecuencias negativas por IA (McKinsey 2025).</p>
+                    <ul>
+                        <li>Detección de amenazas en tiempo real con ML</li>
+                        <li>Análisis predictivo y automatización de respuestas de incidentes</li>
+                        <li>Análisis de malware, autenticación inteligente y reducción de falsos positivos</li>
+                        <li>Políticas Enel: Policy 1296 AI Risk, PL 33 Clasificación de Información, PL 344 Privacidad</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+  <!-- ===== LEGISLACIÓN ===== -->
+    <section id="legislacion">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Módulo 05</span>
+                <h2>📜 Legislación sobre IA (2024-2026)</h2>
+                <p>El panorama regulatorio avanza rápidamente. Conoce las normativas que definen el uso responsable de la IA.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🇪🇺</div>
+                    <h3>Reglamento IA UE (AI Act)</h3>
+                    <p>En vigor desde agosto 2024. Enfoque basado en riesgos: prácticas prohibidas (scoring social), sistemas de alto riesgo, obligaciones de transparencia. Primera ley integral de IA del mundo.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🇺🇸</div>
+                    <h3>EE.UU. — Orden Ejecutiva Biden</h3>
+                    <p>Orden Ejecutiva 14110 (oct 2023) sobre IA segura. Requisitos de evaluación de seguridad para modelos potentes. En 2025, debate activo sobre regulación federal integral.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🇨🇴</div>
+                    <h3>Colombia — Marco Regulatorio</h3>
+                    <p>Ley 1581/2012 (datos personales), CONPES 3975/2019 (Política Nacional de IA), Circular SIC 002/2024 (datos en IA). Múltiples proyectos de ley en Congreso (2023-2025).</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">⚖️</div>
+                    <h3>Proyectos de Ley Colombia</h3>
+                    <p>PL 091-2023 (Transparencia), PL 130-2023 (Regulación General), PL 447-2024 (Datos del Estado), PL 200-2024 (Derechos Humanos). Colombia busca equilibrar innovación con protección.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🏢</div>
+                    <h3>Políticas Enel</h3>
+                    <p>Policy 1296 (AI Risk Management), PL 33 (Clasificación de Información), PL 344 (Privacidad y Datos Personales). Marco corporativo alineado con regulaciones internacionales.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Tendencias Globales 2025-2026</h3>
+                    <p>Italia bloqueó ChatGPT temporalmente (2023). Debates sobre copyright de contenido generado por IA. OpenAI recibe demandas de The New York Times, autores y artistas por derechos de autor.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ===== ÉTICA ===== -->
+    <section id="etica" style="background: var(--dark-surface);">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Módulo 06</span>
+                <h2>⚖️ Ética y Principios</h2>
+                <p>"Conjunto de normas morales que rigen la conducta de la persona en cualquier ámbito de la vida"</p>
+            </div>
+
+            <div class="ethics-principles reveal">
+                <div class="principle"><span class="emoji">🔍</span>Transparencia</div>
+                <div class="principle"><span class="emoji">🔐</span>Privacidad</div>
+                <div class="principle"><span class="emoji">🎛️</span>Control Humano</div>
+                <div class="principle"><span class="emoji">🛡️</span>Seguridad</div>
+                <div class="principle"><span class="emoji">📋</span>Responsabilidad</div>
+                <div class="principle"><span class="emoji">🤝</span>No Discriminación</div>
+                <div class="principle"><span class="emoji">🌍</span>Inclusión</div>
+                <div class="principle"><span class="emoji">👶</span>Derechos de Niños</div>
+                <div class="principle"><span class="emoji">💚</span>Beneficio Social</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== MEDIO AMBIENTE ===== -->
+    <section id="ambiente">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Impacto Ambiental</span>
+                <h2>🌱 IA y Medio Ambiente</h2>
+                <p>Con gran poder viene gran responsabilidad: el consumo energético de la IA es real</p>
+            </div>
+
+            <div class="env-split reveal">
+                <div class="env-column">
+                    <h3>⚠️ Desafíos</h3>
+                    <div class="env-list">
+                        <div class="env-item challenge">🔥 Emisiones de carbono</div>
+                        <div class="env-item challenge">💧 Consumo de agua (2-5 litros por imagen generada)</div>
+                        <div class="env-item challenge">🗑️ Basura electrónica</div>
+                        <div class="env-item challenge">⛏️ Explotación de recursos</div>
+                        <div class="env-item challenge">⚡ 1 consulta ChatGPT ≈ 2.9 Wh (10x una búsqueda Google)</div>
+                    </div>
+                </div>
+                <div class="env-column">
+                    <h3>🌿 Oportunidades</h3>
+                    <div class="env-list">
+                        <div class="env-item opportunity">🔋 Mejor gestión de recursos</div>
+                        <div class="env-item opportunity">🌤️ Predicción climática avanzada</div>
+                        <div class="env-item opportunity">☀️ Optimización de energías renovables</div>
+                        <div class="env-item opportunity">🦁 Protección de vida silvestre</div>
+                        <div class="env-item opportunity">♻️ Gestión inteligente de residuos</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dato-flash reveal">
+                <span class="emoji">🌍</span>
+                <div><strong>Dato actualizado (2025):</strong> Una serie de 5 a 50 prompts a ChatGPT consume aprox. 0.5 litros de agua para enfriar los servidores de Microsoft (UC Riverside). OpenAI planea gastar $1.4 billón en infraestructura de IA en 8 años.</div>
+            </div>
+
+            <div class="env-impact-stat reveal">
+                <div class="big-number">~1 GWh/día</div>
+                <p style="color: var(--text-muted); margin-top: 12px;">Consumo energético diario estimado de ChatGPT — equivalente a ~33,000 hogares estadounidenses</p>
+            </div>
+
+            <!-- Video Impacto Ambiental -->
+            <div class="video-container reveal" style="margin-top: 40px;">
+                <iframe src="https://www.youtube.com/embed/hVJEYaoiNyA" title="El impacto ambiental de la IA" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <p class="video-label reveal">📺 El costo ambiental oculto de la Inteligencia Artificial</p>
+        </div>
+    </section>
+
+    <!-- ===== CONCIENCIA ===== -->
+    <section style="background: var(--dark-surface);">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Reflexión Final</span>
+                <h2>🧠 ¿Conciencia de la IA?</h2>
+            </div>
+            <div class="quote-block reveal">
+                <p>La conciencia se refiere a la capacidad de reconocer y comprender las propias emociones y las de los demás. La IA actual <strong>no tiene conciencia</strong>, pero imita patrones humanos cada vez mejor. En 2025, ChatGPT tiene más de <strong>400 millones de usuarios semanales</strong> y OpenAI vale más de $300 mil millones. La pregunta no es si la IA será parte de tu vida, sino <strong>cómo la usarás</strong>.</p>
+            </div>
+            <div class="dato-flash reveal" style="margin-top: 24px;">
+                <span class="emoji">💡</span>
+                <div><strong>Reflexión:</strong> El 88% de las empresas ya usa IA (McKinsey 2025). Las organizaciones de alto rendimiento tienen 3x más probabilidad de rediseñar flujos de trabajo alrededor de la IA, no solo de agregarla encima. ¿Estás listo para adaptarte?</div>
+            </div>
+        </div>
+    </section>
+
+  
+    <!-- ===== QUIZ INTERACTIVO ===== -->
+    <section id="quiz" style="background: var(--dark-surface);">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Pon a prueba tus conocimientos</span>
+                <h2>🧩 Quiz Interactivo</h2>
+                <p>¿Cuánto aprendiste? Responde las preguntas y descubre tu nivel</p>
+            </div>
+            <div class="quiz-container reveal" id="quizContainer">
+                <div class="quiz-question" id="quizQuestion"></div>
+                <div class="quiz-options" id="quizOptions"></div>
+                <div class="quiz-feedback" id="quizFeedback"></div>
+                <div class="quiz-nav">
+                    <button class="btn btn-outline" id="quizPrev" style="display:none;">← Anterior</button>
+                    <button class="btn btn-primary" id="quizNext">Siguiente →</button>
+                </div>
+                <div style="text-align: center; margin-top: 16px; color: var(--text-muted); font-size: 0.85rem;" id="quizProgress"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <div class="footer-brand">⚡ IA para la Vida</div>
+                    <div class="footer-text" style="margin-top: 4px;">Taller Interactivo — 2026</div>
+                </div>
+                <div class="footer-org">
+                    ICT Colombia & Centro America
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--glass-border);">
+                <p class="footer-text">Creado con ❤️ y un poco de IA</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== JAVASCRIPT ===== -->
+    <script>
+        // ===== NAVBAR SCROLL =====
+        const navbar = document.getElementById('navbar');
+        const scrollProgress = document.getElementById('scrollProgress');
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            scrollProgress.style.width = scrollPercent + '%';
+            navbar.classList.toggle('scrolled', scrollTop > 50);
+        });
+
+        // ===== MOBILE NAV =====
+        document.getElementById('navToggle').addEventListener('click', () => {
+            document.getElementById('navLinks').classList.toggle('open');
+        });
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('navLinks').classList.remove('open');
+            });
+        });
+
+        // ===== SCROLL REVEAL =====
+        const revealElements = document.querySelectorAll('.reveal, .timeline-item');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // ===== COUNTER ANIMATION =====
+        const counters = document.querySelectorAll('[data-count]');
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = +entry.target.dataset.count;
+                    let current = 0;
+                    const increment = target / 30;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            entry.target.textContent = target;
+                            clearInterval(timer);
+                        } else {
+                            entry.target.textContent = Math.ceil(current);
+                        }
+                    }, 40);
+                    counterObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+        counters.forEach(c => counterObserver.observe(c));
+
+        // ===== TOOLS TABS =====
+        document.querySelectorAll('.tool-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tool-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById('tool-' + tab.dataset.tool).classList.add('active');
+            });
+        });
+
+        // ===== INTERACTIVE QUIZ =====
+        const quizData = [
+            {
+                q: '¿Qué significa GPT?',
+                options: [
+                    'General Purpose Technology',
+                    'Generative Pre-trained Transformer',
+                    'Global Processing Tool',
+                    'Generalized Pattern Tracker'
+                ],
+                correct: 1,
+                explanation: 'GPT = Generativa, Preentrenada, Transformer. El modelo actual es GPT-5.4 (marzo 2026).'
+            },
+            {
+                q: '¿Qué es una "alucinación" de la IA?',
+                options: [
+                    'Un error de hardware del servidor',
+                    'Información falsa o engañosa que la IA presenta como verdadera',
+                    'Un tipo de virus informático potenciado por IA',
+                    'Una función avanzada de entrenamiento'
+                ],
+                correct: 1,
+                explanation: 'Las alucinaciones son respuestas falsas que la IA presenta como verdaderas. ChatGPT alucina ~3% de las veces.'
+            },
+            {
+                q: '¿Cuánta agua consume una serie de 5-50 prompts de ChatGPT para enfriar servidores?',
+                options: [
+                    'Prácticamente cero',
+                    'Aproximadamente 0.5 litros',
+                    'Unos 5 litros',
+                    '10 litros o más'
+                ],
+                correct: 1,
+                explanation: 'Según UC Riverside, una sesión de 5-50 prompts consume ~0.5L de agua para enfriamiento en datacenters de Microsoft.'
+            },
+            {
+                q: '¿Qué es un "Agente de IA" como los lanzados por OpenAI en 2025?',
+                options: [
+                    'Un robot físico con inteligencia artificial',
+                    'Un programa que ejecuta tareas autónomamente usando herramientas externas',
+                    'Un asistente virtual que solo responde preguntas',
+                    'Un tipo de antivirus basado en IA'
+                ],
+                correct: 1,
+                explanation: 'Los agentes de IA pueden navegar la web, escribir código y ejecutar tareas de forma autónoma. OpenAI lanzó Operator y Codex en 2025.'
+            },
+            {
+                q: '¿Qué porcentaje de organizaciones usaba IA en 2024 según McKinsey?',
+                options: [
+                    '45%',
+                    '65%',
+                    '88%',
+                    '97%'
+                ],
+                correct: 2,
+                explanation: 'Según el reporte State of AI 2025 de McKinsey, el 88% de las organizaciones ya usa IA, y el 62% experimenta con agentes autónomos.'
+            },
+            {
+                q: '¿Cuál de estos NO es un principio ético de la IA en Colombia?',
+                options: [
+                    'Transparencia',
+                    'Maximización de ganancias corporativas',
+                    'No discriminación',
+                    'Privacidad y protección de datos'
+                ],
+                correct: 1,
+                explanation: 'La maximización de ganancias no es un principio ético. Colombia sigue los lineamientos CONPES 3975 de IA responsable.'
+            },
+            {
+                q: '¿Qué elementos debe tener un buen PROMPT?',
+                options: [
+                    'Solo la pregunta directa sin más contexto',
+                    'Contexto, Rol, Tarea concreta y Detalles clave',
+                    'El nombre de la IA y la fecha actual',
+                    'Solo palabras clave separadas por comas'
+                ],
+                correct: 1,
+                explanation: 'Un buen prompt incluye: Contexto + Rol + Tarea concreta + Detalles clave. ¡El arte de preguntar bien!'
+            }
+        ];
+
+        let currentQuiz = 0;
+        let quizScore = 0;
+        let quizAnswered = new Array(quizData.length).fill(false);
+
+        function renderQuiz() {
+            const q = quizData[currentQuiz];
+            document.getElementById('quizQuestion').textContent = q.q;
+            document.getElementById('quizProgress').textContent = `Pregunta ${currentQuiz + 1} de ${quizData.length} — Puntaje: ${quizScore}/${quizData.length}`;
+
+            const optionsContainer = document.getElementById('quizOptions');
+            optionsContainer.innerHTML = '';
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'quiz-option';
+                btn.textContent = opt;
+                if (!quizAnswered[currentQuiz]) {
+                    btn.addEventListener('click', () => checkAnswer(i));
+                } else {
+                    if (i === q.correct) btn.classList.add('correct');
+                }
+                optionsContainer.appendChild(btn);
+            });
+
+            const feedback = document.getElementById('quizFeedback');
+            feedback.className = 'quiz-feedback';
+            feedback.textContent = '';
+
+            document.getElementById('quizPrev').style.display = currentQuiz > 0 ? 'inline-flex' : 'none';
+            document.getElementById('quizNext').textContent = currentQuiz < quizData.length - 1 ? 'Siguiente →' : '🎉 Resultados';
+        }
+
+        function checkAnswer(selected) {
+            if (quizAnswered[currentQuiz]) return;
+            quizAnswered[currentQuiz] = true;
+
+            const q = quizData[currentQuiz];
+            const options = document.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('quizFeedback');
+
+            options.forEach((opt, i) => {
+                opt.style.pointerEvents = 'none';
+                if (i === q.correct) opt.classList.add('correct');
+                if (i === selected && selected !== q.correct) opt.classList.add('incorrect');
+            });
+
+            if (selected === q.correct) {
+                quizScore++;
+                feedback.className = 'quiz-feedback show success';
+                feedback.textContent = '✅ ¡Correcto! ' + q.explanation;
+            } else {
+                feedback.className = 'quiz-feedback show error';
+                feedback.textContent = '❌ Incorrecto. ' + q.explanation;
+            }
+            document.getElementById('quizProgress').textContent = `Pregunta ${currentQuiz + 1} de ${quizData.length} — Puntaje: ${quizScore}/${quizData.length}`;
+        }
+
+        document.getElementById('quizNext').addEventListener('click', () => {
+            if (currentQuiz < quizData.length - 1) {
+                currentQuiz++;
+                renderQuiz();
+            } else {
+                const container = document.getElementById('quizContainer');
+                const percentage = Math.round((quizScore / quizData.length) * 100);
+                let message = '';
+                if (percentage === 100) message = '🏆 ¡Perfecto! Eres un experto en IA.';
+                else if (percentage >= 60) message = '👏 ¡Muy bien! Tienes una buena base.';
+                else message = '📚 ¡Sigue aprendiendo! La IA tiene mucho que ofrecer.';
+
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px 0;">
+                        <div style="font-size: 4rem; margin-bottom: 16px;">${percentage === 100 ? '🏆' : percentage >= 60 ? '🎉' : '💪'}</div>
+                        <h3 style="font-size: 1.5rem; margin-bottom: 8px;">Resultado: ${quizScore}/${quizData.length}</h3>
+                        <p style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 24px;">${message}</p>
+                        <button class="btn btn-primary" onclick="resetQuiz()">🔄 Reintentar</button>
+                    </div>
+                `;
+            }
+        });
+
+        document.getElementById('quizPrev').addEventListener('click', () => {
+            if (currentQuiz > 0) {
+                currentQuiz--;
+                renderQuiz();
+            }
+        });
+
+        function resetQuiz() {
+            currentQuiz = 0;
+            quizScore = 0;
+            quizAnswered = new Array(quizData.length).fill(false);
+            document.getElementById('quizContainer').innerHTML = `
+                <div class="quiz-question" id="quizQuestion"></div>
+                <div class="quiz-options" id="quizOptions"></div>
+                <div class="quiz-feedback" id="quizFeedback"></div>
+                <div class="quiz-nav">
+                    <button class="btn btn-outline" id="quizPrev" style="display:none;">← Anterior</button>
+                    <button class="btn btn-primary" id="quizNext">Siguiente →</button>
+                </div>
+                <div style="text-align: center; margin-top: 16px; color: var(--text-muted); font-size: 0.85rem;" id="quizProgress"></div>
+            `;
+            document.getElementById('quizNext').addEventListener('click', handleNext);
+            document.getElementById('quizPrev').addEventListener('click', handlePrev);
+            renderQuiz();
+        }
+
+        function handleNext() {
+            if (currentQuiz < quizData.length - 1) {
+                currentQuiz++;
+                renderQuiz();
+            } else {
+                const container = document.getElementById('quizContainer');
+                const percentage = Math.round((quizScore / quizData.length) * 100);
+                let message = '';
+                if (percentage === 100) message = '🏆 ¡Perfecto! Eres un experto en IA.';
+                else if (percentage >= 60) message = '👏 ¡Muy bien! Tienes una buena base.';
+                else message = '📚 ¡Sigue aprendiendo! La IA tiene mucho que ofrecer.';
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px 0;">
+                        <div style="font-size: 4rem; margin-bottom: 16px;">${percentage === 100 ? '🏆' : percentage >= 60 ? '🎉' : '💪'}</div>
+                        <h3 style="font-size: 1.5rem; margin-bottom: 8px;">Resultado: ${quizScore}/${quizData.length}</h3>
+                        <p style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 24px;">${message}</p>
+                        <button class="btn btn-primary" onclick="resetQuiz()">🔄 Reintentar</button>
+                    </div>
+                `;
+            }
+        }
+        function handlePrev() {
+            if (currentQuiz > 0) { currentQuiz--; renderQuiz(); }
+        }
+
+        // Init quiz
+        renderQuiz();
+
+        // ===== ACTIVE NAV LINK =====
+        const sections = document.querySelectorAll('section[id]');
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY + 100;
+            sections.forEach(section => {
+                const top = section.offsetTop;
+                const height = section.offsetHeight;
+                const id = section.getAttribute('id');
+                const link = document.querySelector(`.nav-links a[href="#${id}"]`);
+                if (link) {
+                    link.classList.toggle('active', scrollY >= top && scrollY < top + height);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
