@@ -699,21 +699,63 @@
             margin: 0 auto 48px;
         }
         .principle {
-            padding: 20px;
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
+            perspective: 600px;
+            height: 140px;
+            cursor: pointer;
+        }
+        .principle-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .principle.flipped .principle-inner {
+            transform: rotateY(180deg);
+        }
+        .principle-front, .principle-back {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
             border-radius: var(--radius-sm);
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border: 1px solid var(--glass-border);
+        }
+        .principle-front {
+            background: var(--glass);
             font-size: 0.9rem;
             font-weight: 600;
             transition: var(--transition);
-            cursor: default;
         }
-        .principle:hover {
+        .principle:hover .principle-front {
             background: var(--gradient-1);
             border-color: transparent;
             transform: translateY(-4px);
             box-shadow: 0 8px 24px rgba(108, 58, 237, 0.3);
+        }
+        .principle.flipped:hover .principle-front {
+            transform: none;
+            box-shadow: none;
+        }
+        .principle-back {
+            background: var(--gradient-1);
+            border-color: transparent;
+            transform: rotateY(180deg);
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: rgba(255,255,255,0.95);
+            line-height: 1.5;
+            text-align: center;
+        }
+        .principle-back .back-title {
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
         }
         .principle .emoji { font-size: 1.5rem; display: block; margin-bottom: 8px; }
 
@@ -1762,15 +1804,60 @@
             </div>
 
             <div class="ethics-principles reveal">
-                <div class="principle"><span class="emoji">🔍</span>Transparencia</div>
-                <div class="principle"><span class="emoji">🔐</span>Privacidad</div>
-                <div class="principle"><span class="emoji">🎛️</span>Control Humano</div>
-                <div class="principle"><span class="emoji">🛡️</span>Seguridad</div>
-                <div class="principle"><span class="emoji">📋</span>Responsabilidad</div>
-                <div class="principle"><span class="emoji">🤝</span>No Discriminación</div>
-                <div class="principle"><span class="emoji">🌍</span>Inclusión</div>
-                <div class="principle"><span class="emoji">👶</span>Derechos de Niños</div>
-                <div class="principle"><span class="emoji">💚</span>Beneficio Social</div>
+                <div class="principle" onclick="this.classList.toggle('flipped')">
+                    <div class="principle-inner">
+                        <div class="principle-front"><span class="emoji">🔍</span>Transparencia</div>
+                        <div class="principle-back"><div class="back-title">🔍 Transparencia</div>Los sistemas de IA deben ser explicables. Los usuarios tienen derecho a saber cuándo interactúan con IA y cómo se toman las decisiones.</div>
+                    </div>
+                </div>
+                <div class="principle" onclick="this.classList.toggle('flipped')">
+                    <div class="principle-inner">
+                        <div class="principle-front"><span class="emoji">🔐</span>Privacidad</div>
+                        <div class="principle-back"><div class="back-title">🔐 Privacidad</div>Protección de datos personales en todo el ciclo de vida de la IA. Los datos deben recopilarse con consentimiento y usarse de forma responsable.</div>
+                    </div>
+                </div>
+                <div class="principle" onclick="this.classList.toggle('flipped')">
+                    <div class="principle-inner">
+                        <div class="principle-front"><span class="emoji">🎛️</span>Control Humano</div>
+                        <div class="principle-back"><div class="back-title">🎛️ Control Humano</div>Las personas deben mantener el control sobre los sistemas de IA. Siempre debe existir la posibilidad de intervención y supervisión humana.</div>
+                    </div>
+                </div>
+                <div class="principle" onclick="this.classList.toggle('flipped')">
+                    <div class="principle-inner">
+                        <div class="principle-front"><span class="emoji">🛡️</span>Seguridad</div>
+                        <div class="principle-back"><div class="back-title">🛡️ Seguridad</div>Los sistemas de IA deben ser robustos, seguros y resistentes a ataques. Minimizar riesgos y daños no intencionados es fundamental.</div>
+                    </div>
+                </div>
+                <div class="principle" onclick="this.classList.toggle('flipped')">
+                    <div class="principle-inner">
+                        <div class="principle-front"><span class="emoji">📋</span>Responsabilidad</div>
+                        <div class="principle-back"><div class="back-title">📋 Responsabilidad</div>Debe existir rendición de cuentas clara. Los desarrolladores y organizaciones son responsables del impacto de sus sistemas de IA.</div>
+                    </div>
+                </div>
+                <div class="principle" onclick="this.classList.toggle('flipped')">
+                    <div class="principle-inner">
+                        <div class="principle-front"><span class="emoji">🤝</span>No Discriminación</div>
+                        <div class="principle-back"><div class="back-title">🤝 No Discriminación</div>La IA no debe perpetuar sesgos de género, raza, edad o condición social. Los modelos deben entrenarse con datos diversos y representativos.</div>
+                    </div>
+                </div>
+                <div class="principle" onclick="this.classList.toggle('flipped')">
+                    <div class="principle-inner">
+                        <div class="principle-front"><span class="emoji">🌍</span>Inclusión</div>
+                        <div class="principle-back"><div class="back-title">🌍 Inclusión</div>La IA debe ser accesible para todos, sin importar idioma, discapacidad o ubicación geográfica. Cerrar brechas digitales, no ampliarlas.</div>
+                    </div>
+                </div>
+                <div class="principle" onclick="this.classList.toggle('flipped')">
+                    <div class="principle-inner">
+                        <div class="principle-front"><span class="emoji">👶</span>Derechos de Niños</div>
+                        <div class="principle-back"><div class="back-title">👶 Derechos de Niños</div>Protección especial para menores frente a la IA: contenido apropiado, privacidad reforzada y límites en la recolección de sus datos.</div>
+                    </div>
+                </div>
+                <div class="principle" onclick="this.classList.toggle('flipped')">
+                    <div class="principle-inner">
+                        <div class="principle-front"><span class="emoji">💚</span>Beneficio Social</div>
+                        <div class="principle-back"><div class="back-title">💚 Beneficio Social</div>La IA debe orientarse al bien común: mejorar la salud, educación, medio ambiente y calidad de vida de la sociedad en general.</div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
