@@ -1713,30 +1713,6 @@
                 </div>
             </div>
 
-            <p class="reveal" style="text-align:center; color:var(--text-muted); margin-bottom: 6px; font-size:0.85rem;">
-                Nota: este resumen organizativo es una versión operativa para el taller. Si cargas los PDFs oficiales de Argentina, Chile, Colombia y CA, se puede actualizar con roles y responsabilidades textuales por país.
-            </p>
-
-            <div class="code-demo" style="margin-top:32px;">
-                <div class="code-window reveal">
-                    <div class="code-header">
-                        <div class="code-dot"></div>
-                        <div class="code-dot"></div>
-                        <div class="code-dot"></div>
-                        <span class="code-filename">reporte_semanal.py — caso laboral con apoyo de Copilot</span>
-                    </div>
-                    <div class="code-body">
-                        <span class="comment"># Automatización laboral: consolidar indicadores semanales</span><br>
-                        <span class="keyword">import</span> <span class="variable">pandas</span> <span class="keyword">as</span> <span class="variable">pd</span><br><br>
-                        <span class="keyword">def</span> <span class="function">consolidar_indicadores</span>(<span class="variable">ruta_entrada</span>, <span class="variable">ruta_salida</span>):<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">df</span> = <span class="variable">pd</span>.<span class="function">read_excel</span>(<span class="variable">ruta_entrada</span>)<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">resumen</span> = <span class="variable">df</span>.<span class="function">groupby</span>(<span class="string">"area"</span>).<span class="function">agg</span>({<span class="string">"tickets"</span>: <span class="string">"sum"</span>, <span class="string">"cumplimiento"</span>: <span class="string">"mean"</span>})<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">resumen</span>.<span class="function">to_excel</span>(<span class="variable">ruta_salida</span>)<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="variable">resumen</span><br>
-                    </div>
-                </div>
-            </div>
-
             <div id="ejercicios">
                 <div class="section-header reveal" style="margin-top: 60px; margin-bottom: 32px;">
                     <h3>🧪 Ejercicios del Taller</h3>
