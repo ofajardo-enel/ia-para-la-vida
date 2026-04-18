@@ -588,6 +588,88 @@
         .tool-feature-item h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
         .tool-feature-item p { font-size: 0.83rem; color: var(--text-muted); }
 
+        .copilot-compare-wrap {
+            background: var(--dark-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            overflow-x: auto;
+            margin: 32px 0;
+        }
+        .copilot-compare {
+            width: 100%;
+            min-width: 760px;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+        }
+        .copilot-compare th,
+        .copilot-compare td {
+            padding: 14px 16px;
+            border: 1px solid var(--glass-border);
+            text-align: left;
+            vertical-align: top;
+        }
+        .copilot-compare th {
+            background: rgba(0, 0, 0, 0.25);
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+        .copilot-compare td {
+            color: var(--text-muted);
+        }
+        .copilot-compare td:first-child {
+            color: var(--text);
+            font-weight: 600;
+            width: 36%;
+        }
+        .copilot-note {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(240px, 1fr));
+            gap: 16px;
+            margin: 24px 0 36px;
+        }
+        .copilot-note-item {
+            padding: 18px 20px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--glass-border);
+            background: var(--glass);
+            font-weight: 600;
+        }
+        .governance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+        .governance-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            padding: 22px;
+        }
+        .governance-card h4 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        .governance-card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .governance-card ul {
+            margin-top: 8px;
+        }
+        .governance-card ul li {
+            font-size: 0.86rem;
+            color: var(--text-muted);
+            padding: 4px 0 4px 18px;
+            position: relative;
+        }
+        .governance-card ul li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+
         /* ===== CODE / COPILOT SECTION ===== */
         .code-demo {
             max-width: 800px;
@@ -981,6 +1063,7 @@
             .timeline-dot { left: 4px; }
             .env-split { grid-template-columns: 1fr; }
             .prompt-showcase { grid-template-columns: 1fr; }
+            .copilot-note { grid-template-columns: 1fr; }
             section { padding: 60px 0; }
             .tool-hero-card { padding: 28px; }
             .quote-block { padding: 40px 24px; }
@@ -1567,89 +1650,143 @@
         </div>
     </section>
 
-    <!-- ===== PROGRAMEMOS CON COPILOT ===== -->
+    <!-- ===== COPILOT EN ENEL ===== -->
     <section id="programemos" style="background: var(--dark-surface);">
         <div class="container">
             <div class="section-header reveal">
-                <span class="section-label">Módulo 04 — Hands-On</span>
-                <h2>💻 Programemos con Copilot</h2>
-                <p>Ayudémonos de la IA para programar — 3 ejercicios prácticos de dificultad creciente</p>
+                <span class="section-label">Módulo 04 — Copilot en Enel</span>
+                <h2>Copilot: tu aliado oficial en productividad en Enel</h2>
+                <p>Cómo usarlo correctamente dentro del marco ICT y de IA de la compañía.</p>
             </div>
 
-            <!-- Video de GitHub Copilot -->
-            <div class="video-container reveal">
-                <iframe src="https://www.youtube.com/embed/jXp5D5ZnxGM" title="GitHub Copilot en acción" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            <div class="tool-hero-card reveal" style="text-align:left;">
+                <h3 style="font-size:1.35rem; margin-bottom:10px;">Copilot en Enel: una misma visión, dos niveles de uso</h3>
+                <p style="max-width:none;">Seleccionar la licencia correcta evita sobreexpectativas, mejora la adopción y mantiene el uso de IA alineado con productividad, seguridad de la información y cumplimiento corporativo.</p>
             </div>
-            <p class="video-label reveal">📺 Introducción a GitHub Copilot — Tu programador IA</p>
 
-            <div class="code-demo">
+            <div class="copilot-compare-wrap reveal">
+                <table class="copilot-compare" aria-label="Comparativa de licencias Copilot en Enel">
+                    <thead>
+                        <tr>
+                            <th>Característica</th>
+                            <th>Copilot Basic</th>
+                            <th>Microsoft 365 Copilot (Premium)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Rol principal</td><td>Asistente conversacional corporativo</td><td>Asistente avanzado integrado al trabajo diario</td></tr>
+                        <tr><td>Tipo de uso</td><td>Consulta, apoyo y orientación</td><td>Productividad end-to-end</td></tr>
+                        <tr><td>Acceso al chatbot</td><td>✅ Sí</td><td>✅ Sí</td></tr>
+                        <tr><td>Contexto corporativo general</td><td>✅ Sí</td><td>✅ Sí</td></tr>
+                        <tr><td>Integración con Outlook, Teams, Word, Excel, PowerPoint</td><td>❌ No</td><td>✅ Sí</td></tr>
+                        <tr><td>Uso sobre documentos propios (Word, Excel, PPT)</td><td>❌ No</td><td>✅ Sí</td></tr>
+                        <tr><td>Resúmenes de reuniones y correos</td><td>❌ No</td><td>✅ Sí</td></tr>
+                        <tr><td>Generación de contenido desde M365</td><td>❌ No</td><td>✅ Sí</td></tr>
+                        <tr><td>Automatización y productividad avanzada</td><td>❌ No</td><td>✅ Sí</td></tr>
+                        <tr><td>Perfil de usuario típico</td><td>Usuario informativo / explorador</td><td>Usuario intensivo de productividad</td></tr>
+                        <tr><td>Mensaje clave</td><td><em>Pregunta, aprende y oriéntate</em></td><td><em>Trabaja más rápido dentro de M365</em></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="copilot-note reveal">
+                <div class="copilot-note-item">Copilot Basic → 💬 Conversa y consulta</div>
+                <div class="copilot-note-item">M365 Copilot Premium → 🚀 Produce, resume y crea</div>
+            </div>
+
+            <div class="governance-grid reveal">
+                <div class="governance-card">
+                    <h4>Políticas de IA en Enel (marco de trabajo)</h4>
+                    <p>El uso de IA debe mantenerse dentro del marco corporativo de riesgo, privacidad y seguridad de la información.</p>
+                    <ul>
+                        <li>Policy 1296: AI Risk Management.</li>
+                        <li>PL 33: Clasificación de la información.</li>
+                        <li>PL 344: Privacidad y datos personales.</li>
+                        <li>Validar fuentes y trazabilidad antes de usar contenido generado por IA.</li>
+                        <li>No cargar datos sensibles en herramientas no aprobadas por ICT.</li>
+                    </ul>
+                </div>
+                <div class="governance-card">
+                    <h4>Estructura organizativa de IA y Data Factory</h4>
+                    <p>Resumen ejecutivo de alcance para coordinar correctamente con ICT y con equipos de datos e IA.</p>
+                    <ul>
+                        <li>Data and Digital Solutions Factory: traduce necesidades del negocio a soluciones digitales priorizadas.</li>
+                        <li>Artificial Intelligence and Data Factory: define lineamientos técnicos de datos, modelos y escalabilidad.</li>
+                        <li>Ambas estructuras convergen en gobierno, ejecución y adopción responsable de IA.</li>
+                        <li>Las iniciativas deben pasar por evaluación de valor, riesgo y cumplimiento antes de despliegue.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <p class="reveal" style="text-align:center; color:var(--text-muted); margin-bottom: 6px; font-size:0.85rem;">
+                Nota: este resumen organizativo es una versión operativa para el taller. Si cargas los PDFs oficiales de Argentina, Chile, Colombia y CA, se puede actualizar con roles y responsabilidades textuales por país.
+            </p>
+
+            <div class="code-demo" style="margin-top:32px;">
                 <div class="code-window reveal">
                     <div class="code-header">
                         <div class="code-dot"></div>
                         <div class="code-dot"></div>
                         <div class="code-dot"></div>
-                        <span class="code-filename">triqui.py — generado con Copilot</span>
+                        <span class="code-filename">reporte_semanal.py — caso laboral con apoyo de Copilot</span>
                     </div>
                     <div class="code-body">
-                        <span class="comment"># 🎮 Juego de Triqui generado con IA</span><br>
-                        <span class="keyword">import</span> <span class="variable">tkinter</span> <span class="keyword">as</span> <span class="variable">tk</span><br><br>
-                        <span class="keyword">class</span> <span class="function">TrikiGame</span>:<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.<span class="variable">window</span> = <span class="variable">tk</span>.<span class="function">Tk</span>()<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.<span class="variable">window</span>.<span class="function">title</span>(<span class="string">"Triqui - IA para la Vida"</span>)<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.<span class="variable">board</span> = [<span class="string">""</span>] * <span class="number">9</span><br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.<span class="variable">current</span> = <span class="string">"X"</span><br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># ... Copilot genera el resto ✨</span><br>
+                        <span class="comment"># Automatización laboral: consolidar indicadores semanales</span><br>
+                        <span class="keyword">import</span> <span class="variable">pandas</span> <span class="keyword">as</span> <span class="variable">pd</span><br><br>
+                        <span class="keyword">def</span> <span class="function">consolidar_indicadores</span>(<span class="variable">ruta_entrada</span>, <span class="variable">ruta_salida</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">df</span> = <span class="variable">pd</span>.<span class="function">read_excel</span>(<span class="variable">ruta_entrada</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">resumen</span> = <span class="variable">df</span>.<span class="function">groupby</span>(<span class="string">"area"</span>).<span class="function">agg</span>({<span class="string">"tickets"</span>: <span class="string">"sum"</span>, <span class="string">"cumplimiento"</span>: <span class="string">"mean"</span>})<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">resumen</span>.<span class="function">to_excel</span>(<span class="variable">ruta_salida</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="variable">resumen</span><br>
                     </div>
                 </div>
             </div>
 
-            <!-- EJERCICIOS MEJORADOS -->
             <div id="ejercicios">
                 <div class="section-header reveal" style="margin-top: 60px; margin-bottom: 32px;">
                     <h3>🧪 Ejercicios del Taller</h3>
-                    <p>6 ejercicios prácticos para dominar la IA en tu día a día</p>
+                    <p>Ejercicios diseñados para desarrollarse con Copilot Basic (consulta, orientación y generación guiada)</p>
                 </div>
                 <div class="exercise-grid">
                     <div class="exercise-card reveal">
                         <div class="exercise-num">1</div>
-                        <h4>✉️ Redacción Profesional con Copilot</h4>
-                        <p>Usa Copilot en Outlook/Teams para redactar un correo formal solicitando un aumento salarial, mencionando logros específicos.</p>
-                        <div class="prompt-example">💡 Prompt: "Redacta un correo muy formal solicitando aumento de sueldo. La razón: he implementado exitosamente la resolución CREG-015 con trabajo extra significativo. Tono: respetuoso pero firme."</div>
+                        <h4>✉️ Redacción de Correo Ejecutivo</h4>
+                        <p>Redacta un correo para solicitar información a un proveedor con tono profesional y estructura corporativa.</p>
+                        <div class="prompt-example">💡 Prompt: "Actúa como asistente ejecutivo. Redacta un correo formal en español para solicitar estado de cumplimiento de hitos del contrato 2026. Incluye asunto, saludo, cuerpo en 3 párrafos y cierre."</div>
                     </div>
                     <div class="exercise-card reveal">
                         <div class="exercise-num">2</div>
-                        <h4>📊 Finanzas Personales con ChatGPT</h4>
-                        <p>Pídele a ChatGPT que genere un archivo Excel completo para control de finanzas personales con gráficos e indicadores.</p>
-                        <div class="prompt-example">💡 Prompt: "Genera un archivo Excel para control de finanzas personales con ingresos, gastos, gráficas de resumen y todos los indicadores para mejorar mi control de gastos."</div>
+                        <h4>📄 Resumen de Documento Técnico</h4>
+                        <p>Toma una política o procedimiento largo y conviértelo en una guía de una página para usuarios finales.</p>
+                        <div class="prompt-example">💡 Prompt: "Resume este documento en máximo 10 puntos accionables. Luego crea una versión para personal no técnico con lenguaje claro y 3 recomendaciones prácticas."</div>
                     </div>
                     <div class="exercise-card reveal">
                         <div class="exercise-num">3</div>
-                        <h4>🎮 Programa un Juego de Triqui</h4>
-                        <p>En VS Code, usa Copilot para crear un juego paso a paso. Primero la lógica básica, luego mejóralo a una app de escritorio con interfaz gráfica.</p>
-                        <div class="prompt-example">💡 Paso 1: "Dame código Python de un juego de triqui" → Paso 2: "Mejora el código para una app de escritorio con colores y animaciones"</div>
+                        <h4>🧮 Script de Consolidación de Reportes</h4>
+                        <p>Reemplaza el ejercicio de triqui por un caso laboral: consolidar indicadores semanales de varias áreas en un solo reporte.</p>
+                        <div class="prompt-example">💡 Paso 1: "Genera un script en Python que lea 3 archivos Excel y consolide KPIs por área" → Paso 2: "Agrega validaciones de datos faltantes y exporta un resumen ejecutivo"</div>
                     </div>
                     <div class="exercise-card reveal">
                         <div class="exercise-num">4</div>
-                        <h4>🔍 Deep Research: Análisis de Regulación</h4>
-                        <p>Usa la función Deep Research de ChatGPT para analizar el estado actual de la regulación de IA en Colombia vs. la Unión Europea.</p>
-                        <div class="prompt-example">💡 Prompt: "Haz una investigación profunda comparando la regulación de IA en Colombia (proyectos de ley, CONPES 3975) vs. el Reglamento de IA de la UE 2024. Tabla comparativa."</div>
+                        <h4>📊 Matriz de Riesgos de IA</h4>
+                        <p>Construye una matriz básica de riesgos operativos al usar IA en procesos del equipo y define controles mínimos.</p>
+                        <div class="prompt-example">💡 Prompt: "Crea una matriz de riesgos con columnas: riesgo, impacto, probabilidad, control preventivo y responsable. Enfócate en privacidad, alucinaciones y fuga de información."</div>
                     </div>
                     <div class="exercise-card reveal">
                         <div class="exercise-num">5</div>
-                        <h4>🖼️ Generación de Imágenes</h4>
-                        <p>Experimenta con GPT Image: genera un logo profesional, una infografía o una presentación visual para tu área de trabajo.</p>
-                        <div class="prompt-example">💡 Prompt: "Genera una infografía profesional sobre los 5 principios de seguridad de información al usar IA. Estilo corporativo, colores azul y verde, incluye iconos."</div>
+                        <h4>🗂️ Estandarización de Minutas</h4>
+                        <p>Crea una plantilla estándar de minuta de reunión con secciones de decisiones, compromisos y responsables.</p>
+                        <div class="prompt-example">💡 Prompt: "Diseña una plantilla de minuta ejecutiva para reuniones semanales ICT. Incluye: objetivos, decisiones, pendientes, dueño y fecha compromiso."</div>
                     </div>
                     <div class="exercise-card reveal">
                         <div class="exercise-num">6</div>
-                        <h4>⚡ Automatiza con Power Automate</h4>
-                        <p>Crea un flujo automático que te envíe un resumen diario de correos importantes usando IA integrada de Power Automate.</p>
-                        <div class="prompt-example">💡 Describe en Power Automate: "Cuando reciba un correo de mi jefe, clasifícalo por urgencia con IA y envíame un resumen a Teams."</div>
+                        <h4>📆 Plan de Adopción de Copilot Basic</h4>
+                        <p>Define un plan de 30 días para adopción progresiva de Copilot Basic por equipo, con métricas de uso y calidad.</p>
+                        <div class="prompt-example">💡 Prompt: "Crea un plan de adopción de 4 semanas para 20 usuarios. Incluye objetivos por semana, 3 casos de uso, riesgos y KPIs de seguimiento."</div>
                     </div>
                 </div>
                 <p style="text-align: center; color: var(--text-muted); margin-top: 32px; font-size: 0.85rem;" class="reveal">
-                    💡 <strong>Nota:</strong> Para programar se requiere Python instalado y VS Code con GitHub Copilot. Copilot puede generar código en cualquier lenguaje: Python, VBA, Java, JavaScript, etc.
+                    💡 <strong>Nota:</strong> Estos ejercicios están orientados a capacidades de Copilot Basic: conversación, consulta y generación guiada. Para automatizaciones end-to-end sobre M365, considera escenarios con licencia Premium.
                 </p>
             </div>
         </div>
