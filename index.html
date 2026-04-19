@@ -1266,6 +1266,27 @@
         </div>
     </section>
 
+    <!-- ===== QUIZ INICIAL ===== -->
+    <section id="quiz-inicial" style="background: var(--dark-surface); padding-top: 70px;">
+        <div class="container">
+            <div class="section-header reveal" style="margin-bottom: 36px;">
+                <span class="section-label">Rompehielo</span>
+                <h2>⚡ Quiz Inicial</h2>
+                <p>Antes de empezar, mide tu punto de partida en menos de 1 minuto.</p>
+            </div>
+            <div class="quiz-container reveal" id="iceQuizContainer">
+                <div class="quiz-question" id="iceQuizQuestion"></div>
+                <div class="quiz-options" id="iceQuizOptions"></div>
+                <div class="quiz-feedback" id="iceQuizFeedback"></div>
+                <div class="quiz-nav">
+                    <button class="btn btn-outline" id="iceQuizPrev" style="display:none;">← Anterior</button>
+                    <button class="btn btn-primary" id="iceQuizNext">Siguiente →</button>
+                </div>
+                <div style="text-align: center; margin-top: 16px; color: var(--text-muted); font-size: 0.85rem;" id="iceQuizProgress"></div>
+            </div>
+        </div>
+    </section>
+
     <!-- ===== AGENDA ===== -->
     <section id="agenda">
         <div class="container">
@@ -2365,6 +2386,163 @@
                 document.getElementById('tool-' + tab.dataset.tool).classList.add('active');
             });
         });
+
+        // ===== INITIAL ICEBREAKER QUIZ =====
+        const iceQuizData = [
+            {
+                q: '¿Cuál herramienta usas más hoy en tu trabajo?',
+                options: ['Excel', 'Outlook/Teams', 'ChatGPT/Copilot', 'Aún no uso IA'],
+                correct: 2,
+                explanation: 'No hay una única respuesta correcta en la práctica, pero en este taller nos enfocamos en el uso guiado de asistentes de IA.'
+            },
+            {
+                q: 'Si una IA te da un dato importante, ¿qué debes hacer primero?',
+                options: ['Copiar y enviar de inmediato', 'Verificar la fuente y contexto', 'Traducirlo al inglés', 'Convertirlo en imagen'],
+                correct: 1,
+                explanation: 'Buen hábito de trabajo: verificar fuente, fecha y contexto antes de usar la información.'
+            },
+            {
+                q: '¿Qué tipo de tarea es ideal para iniciar con IA en oficina?',
+                options: ['Automatizar una central nuclear', 'Resumir correos y documentos', 'Eliminar controles de seguridad', 'Publicar datos sensibles'],
+                correct: 1,
+                explanation: 'Resumir, redactar y organizar información es un caso de uso rápido y de bajo riesgo para empezar.'
+            }
+        ];
+
+        let iceCurrentQuiz = 0;
+        let iceQuizScore = 0;
+        let iceQuizAnswered = new Array(iceQuizData.length).fill(false);
+
+        function renderIceQuiz() {
+            const q = iceQuizData[iceCurrentQuiz];
+            document.getElementById('iceQuizQuestion').textContent = q.q;
+            document.getElementById('iceQuizProgress').textContent = `Pregunta ${iceCurrentQuiz + 1} de ${iceQuizData.length} — Puntaje: ${iceQuizScore}/${iceQuizData.length}`;
+
+            const optionsContainer = document.getElementById('iceQuizOptions');
+            optionsContainer.innerHTML = '';
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'quiz-option';
+                btn.textContent = opt;
+                if (!iceQuizAnswered[iceCurrentQuiz]) {
+                    btn.addEventListener('click', () => checkIceAnswer(i));
+                } else {
+                    if (i === q.correct) btn.classList.add('correct');
+                }
+                optionsContainer.appendChild(btn);
+            });
+
+            const feedback = document.getElementById('iceQuizFeedback');
+            feedback.className = 'quiz-feedback';
+            feedback.textContent = '';
+
+            document.getElementById('iceQuizPrev').style.display = iceCurrentQuiz > 0 ? 'inline-flex' : 'none';
+            document.getElementById('iceQuizNext').textContent = iceCurrentQuiz < iceQuizData.length - 1 ? 'Siguiente →' : '🎉 Resultado';
+        }
+
+        function checkIceAnswer(selected) {
+            if (iceQuizAnswered[iceCurrentQuiz]) return;
+            iceQuizAnswered[iceCurrentQuiz] = true;
+
+            const q = iceQuizData[iceCurrentQuiz];
+            const options = document.querySelectorAll('#iceQuizOptions .quiz-option');
+            const feedback = document.getElementById('iceQuizFeedback');
+
+            options.forEach((opt, i) => {
+                opt.style.pointerEvents = 'none';
+                if (i === q.correct) opt.classList.add('correct');
+                if (i === selected && selected !== q.correct) opt.classList.add('incorrect');
+            });
+
+            if (selected === q.correct) {
+                iceQuizScore++;
+                feedback.className = 'quiz-feedback show success';
+                feedback.textContent = '✅ ¡Bien! ' + q.explanation;
+            } else {
+                feedback.className = 'quiz-feedback show error';
+                feedback.textContent = '❌ Casi. ' + q.explanation;
+            }
+            document.getElementById('iceQuizProgress').textContent = `Pregunta ${iceCurrentQuiz + 1} de ${iceQuizData.length} — Puntaje: ${iceQuizScore}/${iceQuizData.length}`;
+        }
+
+        document.getElementById('iceQuizNext').addEventListener('click', () => {
+            if (iceCurrentQuiz < iceQuizData.length - 1) {
+                iceCurrentQuiz++;
+                renderIceQuiz();
+            } else {
+                const container = document.getElementById('iceQuizContainer');
+                const percentage = Math.round((iceQuizScore / iceQuizData.length) * 100);
+                let message = '';
+                if (percentage === 100) message = '🚀 ¡Excelente arranque!';
+                else if (percentage >= 67) message = '👏 Muy buen punto de partida.';
+                else message = '💡 Perfecto para iniciar: este taller te va a ayudar mucho.';
+
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 24px 0;">
+                        <div style="font-size: 3rem; margin-bottom: 12px;">${percentage === 100 ? '🏆' : percentage >= 67 ? '🎯' : '⚡'}</div>
+                        <h3 style="font-size: 1.35rem; margin-bottom: 8px;">Resultado inicial: ${iceQuizScore}/${iceQuizData.length}</h3>
+                        <p style="font-size: 1rem; color: var(--text-muted); margin-bottom: 20px;">${message}</p>
+                        <button class="btn btn-primary" onclick="resetIceQuiz()">🔄 Reintentar Quiz Inicial</button>
+                    </div>
+                `;
+            }
+        });
+
+        document.getElementById('iceQuizPrev').addEventListener('click', () => {
+            if (iceCurrentQuiz > 0) {
+                iceCurrentQuiz--;
+                renderIceQuiz();
+            }
+        });
+
+        function resetIceQuiz() {
+            iceCurrentQuiz = 0;
+            iceQuizScore = 0;
+            iceQuizAnswered = new Array(iceQuizData.length).fill(false);
+            document.getElementById('iceQuizContainer').innerHTML = `
+                <div class="quiz-question" id="iceQuizQuestion"></div>
+                <div class="quiz-options" id="iceQuizOptions"></div>
+                <div class="quiz-feedback" id="iceQuizFeedback"></div>
+                <div class="quiz-nav">
+                    <button class="btn btn-outline" id="iceQuizPrev" style="display:none;">← Anterior</button>
+                    <button class="btn btn-primary" id="iceQuizNext">Siguiente →</button>
+                </div>
+                <div style="text-align: center; margin-top: 16px; color: var(--text-muted); font-size: 0.85rem;" id="iceQuizProgress"></div>
+            `;
+
+            document.getElementById('iceQuizNext').addEventListener('click', () => {
+                if (iceCurrentQuiz < iceQuizData.length - 1) {
+                    iceCurrentQuiz++;
+                    renderIceQuiz();
+                } else {
+                    const container = document.getElementById('iceQuizContainer');
+                    const percentage = Math.round((iceQuizScore / iceQuizData.length) * 100);
+                    let message = '';
+                    if (percentage === 100) message = '🚀 ¡Excelente arranque!';
+                    else if (percentage >= 67) message = '👏 Muy buen punto de partida.';
+                    else message = '💡 Perfecto para iniciar: este taller te va a ayudar mucho.';
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 24px 0;">
+                            <div style="font-size: 3rem; margin-bottom: 12px;">${percentage === 100 ? '🏆' : percentage >= 67 ? '🎯' : '⚡'}</div>
+                            <h3 style="font-size: 1.35rem; margin-bottom: 8px;">Resultado inicial: ${iceQuizScore}/${iceQuizData.length}</h3>
+                            <p style="font-size: 1rem; color: var(--text-muted); margin-bottom: 20px;">${message}</p>
+                            <button class="btn btn-primary" onclick="resetIceQuiz()">🔄 Reintentar Quiz Inicial</button>
+                        </div>
+                    `;
+                }
+            });
+            document.getElementById('iceQuizPrev').addEventListener('click', () => {
+                if (iceCurrentQuiz > 0) {
+                    iceCurrentQuiz--;
+                    renderIceQuiz();
+                }
+            });
+
+            renderIceQuiz();
+        }
+
+        // Init initial quiz
+        renderIceQuiz();
 
         // ===== INTERACTIVE QUIZ =====
         const quizData = [
