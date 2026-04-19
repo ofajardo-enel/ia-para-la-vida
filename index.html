@@ -670,6 +670,98 @@
             color: var(--accent);
         }
 
+        /* ===== ORG CHART ===== */
+        .org-chart-wrap {
+            background: var(--dark-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 32px 24px 40px;
+            margin: 32px 0;
+            overflow-x: auto;
+        }
+        .org-chart-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 28px;
+            letter-spacing: 0.02em;
+        }
+        .org-tree {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 720px;
+        }
+        .org-node {
+            background: var(--dark-surface);
+            border: 1.5px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 10px 16px;
+            text-align: center;
+            font-size: 0.83rem;
+            font-weight: 600;
+            color: var(--text);
+            min-width: 160px;
+            max-width: 220px;
+            position: relative;
+        }
+        .org-node.root {
+            background: var(--gradient-1);
+            border-color: transparent;
+            color: white;
+            font-size: 0.88rem;
+            max-width: 240px;
+        }
+        .org-node small {
+            display: block;
+            font-size: 0.74rem;
+            font-weight: 400;
+            color: rgba(255,255,255,0.7);
+            margin-top: 4px;
+        }
+        .org-node:not(.root) small {
+            color: var(--text-muted);
+        }
+        .org-connector-v {
+            width: 2px;
+            height: 24px;
+            background: var(--glass-border);
+        }
+        .org-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0;
+            position: relative;
+        }
+        .org-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .org-h-line {
+            height: 2px;
+            background: var(--glass-border);
+            flex: 1;
+            align-self: flex-start;
+            margin-top: 23px;
+        }
+        .org-h-line.invisible { background: transparent; }
+        .org-branch-row {
+            display: flex;
+            align-items: flex-start;
+        }
+        .org-subtree {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .org-children {
+            display: flex;
+            align-items: flex-start;
+            gap: 0;
+        }
+
         /* ===== CODE / COPILOT SECTION ===== */
         .code-demo {
             max-width: 800px;
@@ -1710,6 +1802,78 @@
                         <li>Ambas estructuras convergen en gobierno, ejecución y adopción responsable de IA.</li>
                         <li>Las iniciativas deben pasar por evaluación de valor, riesgo y cumplimiento antes de despliegue.</li>
                     </ul>
+                </div>
+            </div>
+
+            <!-- Organigrama ICT Argentina, Chile, Colombia y CA -->
+            <div class="org-chart-wrap reveal">
+                <p class="org-chart-title">ICT Argentina, Chile, Colombia and Central America Organizational Chart (as from January 1st, 2026)</p>
+                <div class="org-tree">
+
+                    <!-- Root -->
+                    <div class="org-node root">ICT Argentina, Chile,<br>Colombia and Central<br>America</div>
+                    <div class="org-connector-v"></div>
+
+                    <!-- Level 2: horizontal bar -->
+                    <div style="display:flex;width:100%;max-width:680px;align-items:flex-start;">
+                        <!-- Left branch -->
+                        <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+                            <div style="height:2px;background:var(--glass-border);width:50%;align-self:flex-end;"></div>
+                            <div style="width:2px;height:24px;background:var(--glass-border);"></div>
+                            <div class="org-node" style="max-width:200px;">
+                                ICT Governance and Compliance Argentina, Chile, Colombia and Central America
+                                <small>Jorge Antonio BRAVO SALVO</small>
+                            </div>
+                        </div>
+                        <!-- Right branch -->
+                        <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+                            <div style="height:2px;background:var(--glass-border);width:50%;align-self:flex-start;"></div>
+                            <div style="width:2px;height:24px;background:var(--glass-border);"></div>
+                            <div class="org-node" style="max-width:200px;background:linear-gradient(135deg,rgba(6,214,160,0.18),rgba(59,130,246,0.18));border-color:rgba(6,214,160,0.4);">
+                                Digital and Data Solutions Factory Argentina, Chile, Colombia and Central America
+                                <small>Fabio LOPEZ PAYARES</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Connector to level 3 (under left branch) -->
+                    <div style="display:flex;width:100%;max-width:680px;">
+                        <div style="flex:1;display:flex;flex-direction:column;align-items:center;">
+                            <div style="width:2px;height:24px;background:var(--glass-border);"></div>
+                            <!-- Level 3 row -->
+                            <div style="display:flex;align-items:flex-start;gap:0;width:100%;">
+                                <!-- ICT Argentina -->
+                                <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+                                    <div style="height:2px;background:var(--glass-border);width:50%;align-self:flex-end;"></div>
+                                    <div style="width:2px;height:20px;background:var(--glass-border);"></div>
+                                    <div class="org-node">
+                                        ICT Argentina
+                                        <small>Claudio PORTO</small>
+                                    </div>
+                                </div>
+                                <!-- ICT Colombia and Central America -->
+                                <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+                                    <div style="height:2px;background:var(--glass-border);width:100%;"></div>
+                                    <div style="width:2px;height:20px;background:var(--glass-border);"></div>
+                                    <div class="org-node">
+                                        ICT Colombia and Central America
+                                        <small>Jorge Alberto CUELLAR GONZALEZ</small>
+                                    </div>
+                                </div>
+                                <!-- ICT Chile -->
+                                <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+                                    <div style="height:2px;background:var(--glass-border);width:50%;align-self:flex-start;"></div>
+                                    <div style="width:2px;height:20px;background:var(--glass-border);"></div>
+                                    <div class="org-node">
+                                        ICT Chile
+                                        <small>Angel Antonio BARRIOS ROMO</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="flex:1;"></div>
+                    </div>
+
                 </div>
             </div>
 
